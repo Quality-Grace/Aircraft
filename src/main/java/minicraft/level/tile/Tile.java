@@ -225,4 +225,10 @@ public abstract class Tile {
 	public int hashCode() {
 		return name.hashCode();
 	}
+
+	// Adds the given index in the array its corresponding colour
+	public void addColourToArray(int[] array, int index){
+		String nameWithoutSpaces = this.name.replace(" ", "");
+		array[index] = TilePixelColour.valueOf(nameWithoutSpaces.toUpperCase()).colour;
+	}
 }

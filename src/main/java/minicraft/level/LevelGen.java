@@ -1544,81 +1544,14 @@ public class LevelGen {
 				for (int x = 0; x < w; x++) { // (inner-loop)Loops through the entire width of the map
 					int i = x + y * w; // Current tile of the map.
 
-					/*The colors used in the pixels are hexadecimal (0xRRGGBB).
+					/*The colors used in the pixels are hexadecimal (0xRRGGBB) and stored in the TilePixelColourEnum.
                       0xff0000 would be fully red
-                      0x00ff00 would be fully blue
-                      0x0000ff would be fully green
-                      0x000000 would be black
                       and 0xffffff would be white etc.
+
+					  This static method takes the pixels and map array and also the current index.
+					  For every tile in the map array it will add their colour to the pixels array.
 					 */
-
-					// Surface tiles
-					if (map[i] == Tiles.get("Grass").id) pixels[i] = 0x54a854;
-					else if (map[i] == Tiles.get("Lawn").id) pixels[i] = 0x60a560;
-					else if (map[i] == Tiles.get("Dirt").id) pixels[i] = 0x836c6c;
-					else if (map[i] == Tiles.get("Rose").id) pixels[i] = 0x60A560;
-					else if (map[i] == Tiles.get("Dandelion").id) pixels[i] = 0x60a560;
-					else if (map[i] == Tiles.get("Poppy").id) pixels[i] = 0x60a560;
-					else if (map[i] == Tiles.get("Daisy").id) pixels[i] = 0x60a560;
-					else if (map[i] == Tiles.get("Water").id) pixels[i] = 0x1A2C89;
-					else if (map[i] == Tiles.get("Lava").id) pixels[i] = 0xC82020;
-					else if (map[i] == Tiles.get("Rock").id) pixels[i] = 0x7a7a7a;
-					else if (map[i] == Tiles.get("Up Rock").id) pixels[i] = 0x939393;
-
-					else if (map[i] == Tiles.get("Iron Ore").id) pixels[i] = 0x452728;
-					else if (map[i] == Tiles.get("Gold Ore").id) pixels[i] = 0x948028;
-					else if (map[i] == Tiles.get("Gem Ore").id) pixels[i] = 0x821DB6;
-
-					else if (map[i] == Tiles.get("Sand").id) pixels[i] = 0xe2e26f;
-					else if (map[i] == Tiles.get("Cactus").id) pixels[i] = 0xC82020;
-					else if (map[i] == Tiles.get("Snow").id) pixels[i] = 0xf0f0f0;
-					else if (map[i] == Tiles.get("Ice Spike").id) pixels[i] = 0xe6e6e6;
-					else if (map[i] == Tiles.get("Stone Bricks").id) pixels[i] = 0xa0a040;
-					else if (map[i] == Tiles.get("Oak tree").id) pixels[i] = 0x255325;
-					else if (map[i] == Tiles.get("Birch tree").id) pixels[i] = 0x0c750c;
-					else if (map[i] == Tiles.get("Fir tree").id) pixels[i] = 0x138b62;
-					else if (map[i] == Tiles.get("Pine tree").id) pixels[i] = 0x117f59;
-
-					// Village
-					else if (map[i] == Tiles.get("Oak Planks").id) pixels[i] = 0x914f0e;
-					else if (map[i] == Tiles.get("Oak Wall").id) pixels[i] = 0x7a430c;
-					else if (map[i] == Tiles.get("Oak Door").id) pixels[i] = 0x7a4817;
-
-					// Ores tiles
-					else if (map[i] == Tiles.get("Iron Ore").id) pixels[i] = 0xC4B1AA;
-					else if (map[i] == Tiles.get("Lapis").id) pixels[i] = 0x2D2D92;
-					else if (map[i] == Tiles.get("Gold Ore").id) pixels[i] = 0xCE9612;
-					else if (map[i] == Tiles.get("Gem Ore").id) pixels[i] = 0xD25BD2;
-
-					// Dungeon tiles
-					else if (map[i] == Tiles.get("Obsidian Wall").id) pixels[i] = 0x480887;
-					else if (map[i] == Tiles.get("Raw Obsidian").id) pixels[i] = 0x5f0aa0;
-					else if (map[i] == Tiles.get("Obsidian").id) pixels[i] = 0x660aa0;
-
-					// Stairs
-					else if (map[i] == Tiles.get("Stairs Down").id) pixels[i] = 0xffffffff;
-					else if (map[i] == Tiles.get("Stairs Up").id) pixels[i] = 0xffffffff;
-
-					// Sky tiles
-					else if (map[i] == Tiles.get("Infinite Fall").id) pixels[i] = 0x255325;
-					else if (map[i] == Tiles.get("Cloud").id) pixels[i] = 0xf7f7f7;
-					else if (map[i] == Tiles.get("Cloud Cactus").id) pixels[i] = 0xfafafa;
-					else if (map[i] == Tiles.get("Skyroot tree").id) pixels[i] = 0x477044;
-					else if (map[i] == Tiles.get("Goldroot tree").id) pixels[i] = 0xBBA14F;
-					else if (map[i] == Tiles.get("Bluroot tree").id) pixels[i] = 0x00769E;
-					else if (map[i] == Tiles.get("Ferrosite").id) pixels[i] = 0xcbc579;
-					else if (map[i] == Tiles.get("Sky grass").id) pixels[i] = 0x5aab8a;
-					else if (map[i] == Tiles.get("Sky fern").id) pixels[i] = 0x5aab8a;
-					else if (map[i] == Tiles.get("Sky lawn").id) pixels[i] = 0x9EC7C6;
-					else if (map[i] == Tiles.get("Sky high grass").id) pixels[i] = 0x4f9678;
-					else if (map[i] == Tiles.get("Holy rock").id) pixels[i] = 0xB9B9CD;
-					else if (map[i] == Tiles.get("jungle grass").id) pixels[i] = 0x8AB33F;
-					else if (map[i] == Tiles.get("Ice").id) pixels[i] = 0x686EEC;
-					
-					else if (map[i] == Tiles.get("Mycelium").id) pixels[i] = 0x665666;
-					else if (map[i] == Tiles.get("Red Mushroom").id) pixels[i] = 0x685868;
-					else if (map[i] == Tiles.get("Brown Mushroom").id) pixels[i] = 0x645464;
-					else pixels[i] = 0x000000;
+					Tiles.addColourToArray(pixels, i, map[i]);
 				}
 			}
 

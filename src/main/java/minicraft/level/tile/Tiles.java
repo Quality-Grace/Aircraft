@@ -341,4 +341,9 @@ public final class Tiles {
 		
 		return get(descriptName).getName(data);
 	}
+
+	public static void addColourToArray(int[] array, int index, int id){
+		if(Tiles.containsTile(id)) tiles.get((short)id).addColourToArray(array,index);
+		else array[index] = 0x000000;
+	}
 }
