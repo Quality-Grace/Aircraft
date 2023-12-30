@@ -275,4 +275,12 @@ public class Structure {
         villageRuinedOverlay2.setData("F:Oak Planks,W:Oak Wall,D:Oak Door,G:Grass",
                 "WWWWW\n" + "WFFFW\n" + "DFFFW\n" + "WFFFW\n" + "WWDWW");
     }
+
+    public static void drawLavaPool(short[] map, int x, int y, int w){
+        lavaPool.draw(map,x,y,w);
+    }
+
+    public static void drawDungeonLock(short[] map, int x, int y, int w){
+        dungeonLock.draw(map,x,y,w);
+    }
 }

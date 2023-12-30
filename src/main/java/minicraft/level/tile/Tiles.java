@@ -342,8 +342,34 @@ public final class Tiles {
 		return get(descriptName).getName(data);
 	}
 
+	// Method to add a colour to an array at a specified index based on the tile ID
+	// If the tile ID is valid (exists in the Tiles collection), fetches the colour and adds it to the array
+	// Otherwise, sets the array element at the specified index to the default colour (0x000000)
 	public static void addColourToArray(int[] array, int index, int id){
 		if(Tiles.containsTile(id)) tiles.get((short)id).addColourToArray(array,index);
 		else array[index] = 0x000000;
+	}
+
+	// Method to add a tile ID to an array at a specified index based on the tile name
+	// Fetches the tile ID using the tile name and adds it to the array
+	public static void addTileIdToArray(short[] array, int index, String tileName){
+		array[index] = get(tileName).id;
+	}
+
+	// Method to check if a given tile ID is equal to the ID of a tile with a specified name
+	// Fetches the tile with the given name and compares its ID with the provided ID
+	// Returns true if they are equal, indicating a match; otherwise, returns false
+	public static boolean idEqualsTile(short id, String tileName){
+		return id == get(tileName).id;
+	}
+
+	// Method to check if a given tile ID exists in an array of tile names
+	// Iterates through the array of tile names and checks if the provided tile ID is equal to any of the tile IDs in the array
+	// Returns true if a match is found, indicating that the tile ID is present in the array; otherwise, returns false
+	public static boolean arrayContainsTileWithId(short id, String[] tiles){
+		for(String tile : tiles){
+			if(Tiles.idEqualsTile(id, tile)) return true;
+		}
+		return false;
 	}
 }
