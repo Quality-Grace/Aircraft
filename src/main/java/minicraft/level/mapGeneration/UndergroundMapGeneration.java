@@ -34,7 +34,7 @@ public class UndergroundMapGeneration extends Map {
         /*
          * This generates the 3 levels of cave, iron, gold and gem
          */
-
+        LoadingDisplay.setMessage("Checking for noise");
         fillMapWithBlocksAndFluids();
 
         if (depth == 1) {
@@ -45,6 +45,7 @@ public class UndergroundMapGeneration extends Map {
         }
 
         /// Generate ores
+        LoadingDisplay.setMessage("Generating Ores");
         generateOres();
 
         if (depth > 2) {
@@ -55,8 +56,6 @@ public class UndergroundMapGeneration extends Map {
     }
 
     private void generateOres() {
-        LoadingDisplay.setMessage("Generating Ores");
-
         for (int i = 0; i < (w*h / 400); i++) {
             int x = random.nextInt(w);
             int y = random.nextInt(h);
@@ -70,7 +69,6 @@ public class UndergroundMapGeneration extends Map {
     }
 
     private void fillMapWithBlocksAndFluids() {
-        LoadingDisplay.setMessage("Checking for noise");
         LevelGen mnoise1 = new LevelGen(w, h, 16);
         LevelGen mnoise2 = new LevelGen(w, h, 16);
         LevelGen mnoise3 = new LevelGen(w, h, 16);

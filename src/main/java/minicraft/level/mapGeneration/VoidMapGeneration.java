@@ -28,7 +28,9 @@ public class VoidMapGeneration extends Map {
 
     @Override
     public void createMap() {
+        LoadingDisplay.setMessage("Checking level");
         fillMapWithBlocks();
+
         plantTrees();
     }
 
@@ -45,8 +47,6 @@ public class VoidMapGeneration extends Map {
         //LevelGen jnoise1 = new LevelGen(w, h, 8);
         //LevelGen jnoise2 = new LevelGen(w, h, 4);
         // LevelGen jnoise3 = new LevelGen(w, h, 8);
-
-        LoadingDisplay.setMessage("Checking level");
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {

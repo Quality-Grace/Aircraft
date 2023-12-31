@@ -28,21 +28,27 @@ public class SkyMapGeneration extends Map{
     // Sky dimension generation
     @Override
     public void createMap() {
+        LoadingDisplay.setMessage("Checking for noise");
         generateClouds();
 
         // Generate skygrass in cloud tile
-        generateSkyGrass();
+        LoadingDisplay.setMessage("Generating Heaven Island");
+        generateTilesInRegion(22,22,90, 190, 42, 21,8,"Cloud","Sky Grass");
 
         // Make the central island
         // Logger.debug("Generating central island ...");
-        generateMountains();
+        LoadingDisplay.setMessage("Generating mountains");
+        generateTilesInRegion(22,22,60,90,40,20,10,"Infinite Fall", "Holy Rock");
 
         // Generate the ferrosite edge for the central island
-        generateFerrosite();
+        LoadingDisplay.setMessage("Generating ferrosite");
+        generateTilesInRegion(38,40,90,190,80,30,12,"Cloud","Ferrosite");
 
         // Generate sky lawn in Sky grass
+        LoadingDisplay.setMessage("Adding some flowers");
         generateSkyLawn();
 
+        LoadingDisplay.setMessage("Adding some trees");
         generateTrees((w * h / 400),42,"Skyroot tree");
         generateTrees((w * h / 200),36,"Bluroot tree");
         generateTrees((w*h/400),24,"Goldroot tree");
@@ -50,14 +56,14 @@ public class SkyMapGeneration extends Map{
         generateCacti();
 
         // Avoid the connection between the Sky grass and Infinite Fall tiles
+        LoadingDisplay.setMessage("Generating Heaven Edges");
         generateHeaveEdges();
 
+        LoadingDisplay.setMessage("Generating Sky Stairs");
         generateSkyStairs();
     }
 
     private void generateSkyStairs() {
-        LoadingDisplay.setMessage("Generating Sky Stairs");
-
         int stairsCount = 0;
         int stairsRadius = 15;
 
@@ -93,14 +99,12 @@ public class SkyMapGeneration extends Map{
     }
 
     private void generateHeaveEdges() {
-        LoadingDisplay.setMessage("Generating Heaven Edges");
-
         for (int j = 0; j < h; j++) {
             for (int x = 0; x < w; x++) {
                 // Check if the current tile is a "sky" tile
                 if (!Tiles.idEqualsTile(map[0][x + j * w], "Infinite fall")
-                   && (Tiles.idEqualsTile(map[0][x + j * w], "Holy Rock")
-                   || Tiles.idEqualsTile(map[0][x + j * w], "Sky fern"))) {
+                        && (Tiles.idEqualsTile(map[0][x + j * w], "Holy Rock")
+                        || Tiles.idEqualsTile(map[0][x + j * w], "Sky fern"))) {
 
                     // Check the surrounding tiles within the specified thickness to see if any of them are "Infinite fall" tiles
                     int edgesThickness = 2;
@@ -133,7 +137,6 @@ public class SkyMapGeneration extends Map{
     }
 
     private void generateTrees(int outerLoopAmount, int innerLoopAmount, String treeType) {
-        LoadingDisplay.setMessage("Adding some trees");
         for (int i = 0; i < outerLoopAmount; i++) {
             int x = random.nextInt(w);
             int y = random.nextInt(h);
@@ -152,7 +155,6 @@ public class SkyMapGeneration extends Map{
     }
 
     private void generateSkyLawn() {
-        LoadingDisplay.setMessage("Adding some flowers");
         for (int i = 0; i < (w * h / 800); i++) {
             int x = (w / 2 - random.nextInt(32)) + random.nextInt(32);
             int y = (w / 2 - random.nextInt(32)) + random.nextInt(32);
@@ -172,25 +174,24 @@ public class SkyMapGeneration extends Map{
         }
     }
 
-    private void generateFerrosite() {
-        LoadingDisplay.setMessage("Generating ferrosite");
+    private void generateTilesInRegion(int xCenter, int yCeneter, int kMax, int jMax, int firstRandomRange, int secondRandomRange, int thirdRandomRange, String tileToCheck, String tileToAdd) {
         for (int i = 0; i < heavenThreshold; i++) {
-            int xs = w / 2 - 38; // center position
-            int ys = h / 2 - 40;
+            int xs = w / 2 - xCenter; // divide the 60 (down) by 2 -> 30 to center
+            int ys = h / 2 - yCeneter;
 
-            for (int k = 0; k < 90; k++) {
+            for (int k = 0; k < kMax; k++) {
                 int x = xs + random.nextInt(28) - random.nextInt(10);
                 int y = ys + random.nextInt(28) - random.nextInt(10);
 
-                for (int j = 0; j < 190; j++) {
-                    int xo = x + random.nextInt(80) - random.nextInt(30) + random.nextInt(12);
-                    int yo = y + random.nextInt(80) - random.nextInt(30) + random.nextInt(12);
+                for (int j = 0; j < jMax; j++) {
+                    int xo = x + random.nextInt(firstRandomRange) - random.nextInt(secondRandomRange) + random.nextInt(thirdRandomRange);
+                    int yo = y + random.nextInt(firstRandomRange) - random.nextInt(secondRandomRange) + random.nextInt(thirdRandomRange);
 
                     for (int yy = yo - 1; yy <= yo + 1; yy++) {
                         for (int xx = xo - 1; xx <= xo + 1; xx++) {
                             if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-                                if (Tiles.idEqualsTile(map[0][xx+yy*w],"Cloud")) {
-                                    Tiles.addTileIdToArray(map[0],xx+yy*w,"Ferrosite");
+                                if (Tiles.idEqualsTile(map[0][xx+yy*w],tileToCheck)) {
+                                    Tiles.addTileIdToArray(map[0],xx+yy*w,tileToAdd);
                                 }
                             }
                         }
@@ -200,64 +201,8 @@ public class SkyMapGeneration extends Map{
         }
     }
 
-    private void generateMountains() {
-        LoadingDisplay.setMessage("Generating mountains");
-        for (int i = 0; i < heavenThreshold; i++) {
-            int xs = w / 2 - 22;
-            int ys = h / 2 - 22;
-
-            for (int k = 0; k < 60; k++) {
-                int x = xs + random.nextInt(28) - random.nextInt(10);
-                int y = ys + random.nextInt(28) - random.nextInt(10);
-
-                for (int j = 0; j < 90; j++) {
-                    int xo = x + random.nextInt(40) - random.nextInt(20) + random.nextInt(10);
-                    int yo = y + random.nextInt(40) - random.nextInt(20) + random.nextInt(10);
-
-                    for (int yy = yo - 1; yy <= yo + 1; yy++) {
-                        for (int xx = xo - 1; xx <= xo + 1; xx++) {
-                            if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-                                if (Tiles.idEqualsTile(map[0][xx+yy*w],"Infinite Fall")) {
-                                    Tiles.addTileIdToArray(map[0],xx+yy*w,"Holy Rock");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void generateSkyGrass() {
-        LoadingDisplay.setMessage("Generating Heaven Island");
-        for (int i = 0; i < heavenThreshold; i++) {
-            int xs = w / 2 - 22; // divide the 60 (down) by 2 -> 30 to center
-            int ys = h / 2 - 22;
-
-            for (int k = 0; k < 90; k++) {
-                int x = xs + random.nextInt(28) - random.nextInt(10);
-                int y = ys + random.nextInt(28) - random.nextInt(10);
-
-                for (int j = 0; j < 190; j++) {
-                    int xo = x + random.nextInt(42) - random.nextInt(21) + random.nextInt(8);
-                    int yo = y + random.nextInt(42) - random.nextInt(21) + random.nextInt(8);
-
-                    for (int yy = yo - 1; yy <= yo + 1; yy++) {
-                        for (int xx = xo - 1; xx <= xo + 1; xx++) {
-                            if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-                                if (Tiles.idEqualsTile(map[0][xx+yy*w],"Cloud")) {
-                                    Tiles.addTileIdToArray(map[0],xx+yy*w,"Sky Grass");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private void generateClouds() {
-        LoadingDisplay.setMessage("Checking for noise");
         LevelGen noise1 = new LevelGen(w, h, 8);
         LevelGen noise2 = new LevelGen(w, h, 8);
 

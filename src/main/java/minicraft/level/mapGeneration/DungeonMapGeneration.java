@@ -28,6 +28,7 @@ public class DungeonMapGeneration extends Map{
 
     @Override
     public void createMap() {
+        LoadingDisplay.setMessage("Checking for noise");
         fillMapWithBlocksAndFluids();
 
         generateLavaPool();
@@ -74,8 +75,6 @@ public class DungeonMapGeneration extends Map{
     private void fillMapWithBlocksAndFluids() {
         LevelGen noise1 = new LevelGen(w, h, 8);
         LevelGen noise2 = new LevelGen(w, h, 8);
-
-        LoadingDisplay.setMessage("Checking for noise");
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {

@@ -35,7 +35,52 @@ public class TopMapGeneration extends Map{
 
     @Override
     public void createMap() {
+        fillMapWithBlocksAndFluids();
 
+        // DESERT GENERATION STEP
+        LoadingDisplay.setMessage("Generating desert");
+        desertGeneration();
+
+        // TUNDRA GENERATION STEP
+        LoadingDisplay.setMessage("Generating tundra");
+        tundraGeneration();
+
+        /// FOREST GENERATION STEP
+        LoadingDisplay.setMessage("Adding some trees");
+        forestGeneration();
+
+        // VEGETATION GENERATION STEP
+        LoadingDisplay.setMessage("Adding some flowers");
+        flowerGeneration();
+
+        LoadingDisplay.setMessage("Adding some plants");
+        lawnGeneration();
+
+        // add cactus to sand
+        cactiGeneration();
+
+        // add ice spikes to snow
+        iceSpikeGeneration();
+
+        // Decoration
+        int beachThickness = 1;
+
+        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Water", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
+
+        LoadingDisplay.setMessage("Generating mountains");
+        mountainGeneration();
+
+        // Generate the beaches (if the ice is generated in the sides)
+        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Ice", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
+
+        LoadingDisplay.setMessage("Generating glaciers");
+        generateGlaciers(beachThickness);
+
+        // Generate the stairs inside the rock
+        generateStairs();
+    }
+
+    private void fillMapWithBlocksAndFluids() {
         // creates a bunch of value maps, some with small size...
         LevelGen mnoise1 = new LevelGen(w, h, 16);
         LevelGen mnoise2 = new LevelGen(w, h, 16);
@@ -46,7 +91,6 @@ public class TopMapGeneration extends Map{
         LevelGen noise2 = new LevelGen(w, h, 32);
 
         LoadingDisplay.setMessage("Checking for theme");
-
         String terrainTheme = (String) Settings.get("Theme");
 
         for (int y = 0; y < h; y++) {
@@ -70,113 +114,54 @@ public class TopMapGeneration extends Map{
                 val += 1 - dist * 16;
 
                 // World themes logic
-                if (terrainType.equals("Island")) {
-                    if (val < -0.7) {
-                        if (Objects.equals(terrainTheme, "Hell")) {
-                            // Lava ocean
-                            Tiles.addTileIdToArray(map[0],i,"Lava");
+                switch (terrainType) {
+                    case "Island":
+                        if (val < -0.7) {
+                            String fluid = (Objects.equals(terrainTheme, "Hell") ? "Lava" : "Water");
+                            Tiles.addTileIdToArray(map[0], i,fluid);
+                        } else if (val > 0.9 && mval > -1.9) {
+                            // Mountains
+                            Tiles.addTileIdToArray(map[0], i,"Up Rock");
                         } else {
-                            // Water ocean
-                            Tiles.addTileIdToArray(map[0],i,"Water");
+                            Tiles.addTileIdToArray(map[0], i,"Grass");
                         }
-                    } else if (val > 0.9 && mval > -1.9) {
-                        // Mountains
-                        Tiles.addTileIdToArray(map[0],i,"Up Rock");
-                    } else {
-                        Tiles.addTileIdToArray(map[0],i,"Grass");
-                    }
-                }
-
-
-                if (terrainType.equals("Box")) {
-                    if (val < -1.5) {
-                        if (Objects.equals(terrainTheme, "Hell")) {
-                            Tiles.addTileIdToArray(map[0],i,"Lava");
+                        break;
+                    case "Box":
+                        if (val < -1.5) {
+                            String fluid = (Objects.equals(terrainTheme, "Hell") ? "Lava" : "Water");
+                            Tiles.addTileIdToArray(map[0], i,fluid);
+                        } else if (val > 0.5 && mval < -1.5) {
+                            Tiles.addTileIdToArray(map[0], i,"Up Rock");
                         } else {
-                            Tiles.addTileIdToArray(map[0],i,"Water");
+                            Tiles.addTileIdToArray(map[0], i,"Grass");
                         }
-
-                    } else if (val > 0.5 && mval < -1.5) {
-                        Tiles.addTileIdToArray(map[0],i,"Up Rock");
-
-                    } else {
-                        Tiles.addTileIdToArray(map[0],i,"Grass");
-                    }
-                }
-
-                if (terrainType.equals("Mountain")) {
-                    if (val < -0.4) {
-                        Tiles.addTileIdToArray(map[0],i,"Grass");
-                    } else if (val > 0.5 && mval < -1.5) {
-                        if (Objects.equals(terrainTheme, "Hell")) {
-                            Tiles.addTileIdToArray(map[0],i,"Lava");
+                        break;
+                    case "Mountain":
+                        if (val < -0.4) {
+                            Tiles.addTileIdToArray(map[0], i,"Grass");
+                        } else if (val > 0.5 && mval < -1.5) {
+                            String fluid = (Objects.equals(terrainTheme, "Hell") ? "Lava" : "Water");
+                            Tiles.addTileIdToArray(map[0], i,fluid);
                         } else {
-                            Tiles.addTileIdToArray(map[0],i,"Water");
+                            Tiles.addTileIdToArray(map[0], i,"Up Rock");
                         }
-                    } else {
-                        Tiles.addTileIdToArray(map[0],i,"Up Rock");
-                    }
-                }
-
-                if (terrainType.equals("Irregular")) {
-                    if (val < -0.5 && mval < -0.5) {
-                        if (Objects.equals(terrainTheme, "Hell")) {
-                            Tiles.addTileIdToArray(map[0],i,"Lava");
+                        break;
+                    case "Irregular":
+                        if (val < -0.5 && mval < -0.5) {
+                            String fluid = (Objects.equals(terrainTheme, "Hell") ? "Lava" : "Water");
+                            Tiles.addTileIdToArray(map[0], i,fluid);
+                        } else if (val > 0.5 && mval < -1.5) {
+                            Tiles.addTileIdToArray(map[0], i,"Rock");
+                        } else if (val < -0.5 && mval > -1.5) {
+                            // Irregular beaches beaches
+                            Tiles.addTileIdToArray(map[0], i,"sand");
                         } else {
-                            Tiles.addTileIdToArray(map[0],i,"Water");
+                            Tiles.addTileIdToArray(map[0], i,"Grass");
                         }
-
-                    } else if (val > 0.5 && mval < -1.5) {
-                        Tiles.addTileIdToArray(map[0],i,"Rock");
-                    } else if (val < -0.5 && mval > -1.5) {
-                        // Irregular beaches beaches
-                        Tiles.addTileIdToArray(map[0],i,"sand");
-                    } else {
-                        Tiles.addTileIdToArray(map[0],i,"Grass");
-                    }
+                        break;
                 }
-
             }
         }
-
-        // DESERT GENERATION STEP
-        desertGeneration();
-
-
-        // TUNDRA GENERATION STEP
-        tundraGeneration();
-
-        /// FOREST GENERATION STEP
-        forestGeneration();
-
-
-        // VEGETATION GENERATION STEP
-        flowerGeneration();
-
-        LoadingDisplay.setMessage("Adding some plants");
-        lawnGeneration();
-
-        // add cactus to sand
-        cactiGeneration();
-
-        // add ice spikes to snow
-        iceSpikeGeneration();
-
-        // Decoration
-        int beachThickness = 1;
-
-        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Water", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
-
-        mountainGeneration();
-
-        // Generate the beaches (if the ice is generated in the sides)
-        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Ice", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
-
-        LoadingDisplay.setMessage("Generating glaciers");
-        generateGlaciers(beachThickness);
-
-        // Generate the stairs inside the rock
-        generateStairs();
     }
 
     private void generateStairs() {
@@ -247,7 +232,6 @@ public class TopMapGeneration extends Map{
     }
 
     private void mountainGeneration() {
-        LoadingDisplay.setMessage("Generating mountains");
         for (int j = 0; j < h; j++) {
             for (int x = 0; x < w; x++) {
                 if ( Tiles.idEqualsTile(map[0][x + j * w],"Up Rock")) {
@@ -333,7 +317,6 @@ public class TopMapGeneration extends Map{
     }
 
     private void flowerGeneration() {
-        LoadingDisplay.setMessage("Adding some flowers");
         for (int i = 0; i < w*h / 400; i++) {
             int x = random.nextInt(w);
             int y = random.nextInt(h);
@@ -367,8 +350,6 @@ public class TopMapGeneration extends Map{
     }
 
     private void forestGeneration() {
-
-        LoadingDisplay.setMessage("Adding some trees");
         for (int i = 0; i < w*h / 200; i++) {
             int x = random.nextInt(w);
             int y = random.nextInt(h);
@@ -384,9 +365,7 @@ public class TopMapGeneration extends Map{
                         } else {
                             Tiles.addTileIdToArray(map[0],xx+yy*w,"Pine Tree");
                         }
-                    }
-
-                    if (Tiles.idEqualsTile(map[0][xx + yy * w], "Grass")) {
+                    } else if (Tiles.idEqualsTile(map[0][xx + yy * w], "Grass")) {
                         if (random.nextBoolean()) {
                             Tiles.addTileIdToArray(map[0],xx+yy*w,"Oak Tree");
                         } else {
@@ -400,7 +379,7 @@ public class TopMapGeneration extends Map{
 
     private void tundraGeneration() {
         int tundraThreshold = w*h / (terrainType.equals("Tundra") ? 600 : 2840);
-        LoadingDisplay.setMessage("Generating tundra");
+
         for (int i = 0; i < tundraThreshold; i++) {
             int xs = (w/2 - random.nextInt(w/2)) - 32;  // [0 0]
             int ys = (w/2 - random.nextInt(h/2)) - 32; // [0 1]
@@ -433,7 +412,7 @@ public class TopMapGeneration extends Map{
 
     private void desertGeneration() {
         int desertThreshold = w*h / (terrainType.equals("Desert") ? 600 : 2840);
-        LoadingDisplay.setMessage("Generating desert");
+
         for (int i = 0; i < desertThreshold; i++) {
             // Position
             int xs = (w/2 + random.nextInt(w/2)) + 32;   // [0 0]
