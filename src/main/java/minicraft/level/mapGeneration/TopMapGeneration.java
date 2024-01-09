@@ -65,13 +65,13 @@ public class TopMapGeneration extends Map{
         // Decoration
         int beachThickness = 1;
 
-        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Water", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
+        replaceTilesInAreaWithCondition(beachThickness,"Water", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
 
         LoadingDisplay.setMessage("Generating mountains");
         mountainGeneration();
 
         // Generate the beaches (if the ice is generated in the sides)
-        replaceTilesInAreaWithCondition(beachThickness,beachThickness,"Ice", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
+        replaceTilesInAreaWithCondition(beachThickness,"Ice", new String[]{"Grass", "Oak Tree", "Poppy", "Rose", "Daisy", "Birch Tree", "Lawn", "Dandelion"},"Sand");
 
         LoadingDisplay.setMessage("Generating glaciers");
         generateGlaciers(beachThickness);
@@ -205,22 +205,42 @@ public class TopMapGeneration extends Map{
     }
 
     private void generateGlaciers(int beachThickness) {
-        replaceTilesInAreaWithCondition(5 + random.nextInt(6),5 + random.nextInt(8),"Water",new String[]{"Ice"}, "Hole");
-        replaceTilesInAreaWithCondition(16,16,"Water",new String[]{"Hole"}, "Water");
-        replaceTilesInAreaWithCondition(beachThickness, beachThickness,"Ice", new String[]{"Snow", "Fir Tree", "Pine Tree"}, "Snow");
-        replaceTilesInAreaWithCondition(beachThickness - random.nextInt(2), beachThickness - random.nextInt(1), "Grass", new String[]{"Snow", "Fir Tree", "Pine Tree"}, "Snow");
+        replaceTilesInRandomAreaWithCondition( 5, 6, 8, "Water", new String[]{"Ice"}, "Hole");
+        replaceTilesInAreaWithCondition(16,"Water",new String[]{"Hole"}, "Water");
+        replaceTilesInAreaWithCondition(beachThickness,"Ice", new String[]{"Snow", "Fir Tree", "Pine Tree"}, "Snow");
+        replaceTilesInRandomAreaWithCondition(beachThickness, 2, 1, "Grass", new String[]{"Snow", "Fir Tree", "Pine Tree"}, "Snow");
     }
 
-    private void replaceTilesInAreaWithCondition(int randomX, int randomY, String tileToReplace, String[] validReplacementTiles, String replacementTile) {
+    private void replaceTilesInAreaWithCondition(int randomValue, String tileToReplace, String[] validReplacementTiles, String replacementTile) {
         for (int j = 0; j < h; j++) {
             for (int x = 0; x < w; x++) {
-                if (!Tiles.idEqualsTile(map[0][x + j * w], replacementTile) && Tiles.arrayContainsTileWithId(map[0][x+j*w], validReplacementTiles)) {
+                if (Tiles.arrayContainsTileWithId(map[0][x+j*w], validReplacementTiles)) {
                     check_ocean:
-                    for (int tx = x - randomX; tx <= x + randomX; tx++) {
-                        for (int ty = j - randomY; ty <= j + 5 + randomY; ty++) {
+                    for (int tx = x - randomValue; tx <= x + randomValue; tx++) {
+                        for (int ty = j - randomValue; ty <= j + randomValue; ty++) {
                             if (tx >= 0 && ty >= 0 && tx <= w && ty <= h && (tx != x || ty != j)) {
-                                if (Tiles.idEqualsTile(map[0][tx + ty * w], replacementTile)) {
-                                    Tiles.addTileIdToArray(map[0], x+j*w, tileToReplace);
+                                if (Tiles.idEqualsTile(map[0][tx + ty * w], tileToReplace)) {
+                                    Tiles.addTileIdToArray(map[0], x+j*w, replacementTile);
+                                    break check_ocean;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void replaceTilesInRandomAreaWithCondition(int bias, int randomX, int randomY, String tileToReplace, String[] validReplacementTiles, String replacementTile) {
+        for (int j = 0; j < h; j++) {
+            for (int x = 0; x < w; x++) {
+                if (Tiles.arrayContainsTileWithId(map[0][x+j*w], validReplacementTiles)) {
+                    check_ocean:
+                    for (int tx = x - bias + random.nextInt(randomX); tx <= x + bias +random.nextInt(randomX); tx++) {
+                        for (int ty = j - bias + random.nextInt(randomY); ty <= j + bias + random.nextInt(randomY); ty++) {
+                            if (tx >= 0 && ty >= 0 && tx <= w && ty <= h && (tx != x || ty != j)) {
+                                if (Tiles.idEqualsTile(map[0][tx + ty * w], tileToReplace)) {
+                                    Tiles.addTileIdToArray(map[0], x+j*w, replacementTile);
                                     break check_ocean;
                                 }
                             }
