@@ -2,10 +2,7 @@ package minicraft.screen.tutorial;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.graphic.Color;
-import minicraft.graphic.Font;
-import minicraft.graphic.Screen;
-import minicraft.graphic.Sprite;
+import minicraft.graphic.*;
 import minicraft.screen.Display;
 import minicraft.screen.Menu;
 import minicraft.screen.RelPos;
@@ -16,17 +13,17 @@ public class CombatTutorial extends Display {
 
     public CombatTutorial() {
         super(true, new Menu.Builder(false, 6, RelPos.LEFT,
-                new StringEntry("                " + Localization.getLocalized("How to Attack."), Color.ORANGE),
-                new BlankEntry(), new StringEntry(Localization.getLocalized("You can attack with:"), Color.WHITE),
+                new StringEntry("                " + Localization.getLocalized("How to Attack."), StaticColorsVars.ORANGE),
+                new BlankEntry(), new StringEntry(Localization.getLocalized("You can attack with:"), StaticColorsVars.WHITE),
                 new BlankEntry(), new BlankEntry(),
-                new StringEntry(Localization.getLocalized("When killing some mobs, they drop loot or"), Color.WHITE),
-                new StringEntry(Localization.getLocalized("materials for the crafting of other items:"), Color.WHITE),
-                new BlankEntry(), new StringEntry("         =  , ,", Color.GRAY), new BlankEntry(),
-                new StringEntry(Localization.getLocalized("You can also hit Tiles, like trees or rocks"), Color.WHITE),
+                new StringEntry(Localization.getLocalized("When killing some mobs, they drop loot or"), StaticColorsVars.WHITE),
+                new StringEntry(Localization.getLocalized("materials for the crafting of other items:"), StaticColorsVars.WHITE),
+                new BlankEntry(), new StringEntry("         =  , ,", StaticColorsVars.GRAY), new BlankEntry(),
+                new StringEntry(Localization.getLocalized("You can also hit Tiles, like trees or rocks"), StaticColorsVars.WHITE),
                 new StringEntry(Localization.getLocalized("to get resources and modify your environment:"),
-                        Color.WHITE),
-                new BlankEntry(), new StringEntry("         =  , ,", Color.GRAY), new BlankEntry())
-                        .setTitle("Tutorial", Color.YELLOW).createMenu());
+                        StaticColorsVars.WHITE),
+                new BlankEntry(), new StringEntry("         =  , ,", StaticColorsVars.GRAY), new BlankEntry())
+                        .setTitle("Tutorial", StaticColorsVars.YELLOW).createMenu());
     }
 
     @Override
@@ -36,7 +33,7 @@ public class CombatTutorial extends Display {
         // player attacking a zombie
         // -------------------------------------------------------------------------------
 
-        Font.drawCentered(Game.input.getMapping("ATTACK"), screen, Screen.h - 190, Color.GRAY); // Attack controls
+        Font.drawCentered(Game.input.getMapping("ATTACK"), screen, Screen.h - 190, StaticColorsVars.GRAY); // Attack controls
 
         for (int y = 0; y < 2; y++) {
             for (int x = 0; x < 2; x++) {

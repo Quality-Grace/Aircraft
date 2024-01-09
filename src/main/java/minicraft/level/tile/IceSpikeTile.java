@@ -11,6 +11,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.graphic.Color;
 import minicraft.graphic.Screen;
 import minicraft.graphic.Sprite;
+import minicraft.graphic.StaticColorsVars;
 import minicraft.item.Items;
 import minicraft.level.Level;
 
@@ -42,7 +43,7 @@ public class IceSpikeTile extends Tile {
 		}
 
 		level.add(new SmashParticle(x << 4, y << 4));
-		level.add(new TextParticle("" + hurtDamage, (x << 4) + 8, (y << 4) + 8, Color.BLUE));
+		level.add(new TextParticle("" + hurtDamage, (x << 4) + 8, (y << 4) + 8, StaticColorsVars.BLUE));
 
 		if (damage >= iceHealth) {
 			Sound.genericHurt.playOnLevel(x << 4, y << 4);

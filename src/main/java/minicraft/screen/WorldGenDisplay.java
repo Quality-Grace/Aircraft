@@ -12,6 +12,7 @@ import minicraft.core.io.Settings;
 import minicraft.graphic.Color;
 import minicraft.graphic.Font;
 import minicraft.graphic.Screen;
+import minicraft.graphic.StaticColorsVars;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 
@@ -119,7 +120,7 @@ public class WorldGenDisplay extends Display {
             	
                 @Override
                 public void render(Screen screen, int x, int y, boolean isSelected) {
-                    Font.draw(toString(), screen, x, y, Color.CYAN);
+                    Font.draw(toString(), screen, x, y, StaticColorsVars.CYAN);
                 }
             },
 

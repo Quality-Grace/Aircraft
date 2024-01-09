@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import minicraft.graphic.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,10 +20,6 @@ import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.graphic.Color;
-import minicraft.graphic.Font;
-import minicraft.graphic.Point;
-import minicraft.graphic.Screen;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -157,10 +154,10 @@ public class AchievementsDisplay extends Display {
 		super.render(screen);
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.YELLOW);
+		Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, StaticColorsVars.YELLOW);
 
 		// Achievement score.
-		Font.drawCentered(Localization.getLocalized("Achievements Score:") + " " + achievementScore, screen, 32, Color.GRAY);
+		Font.drawCentered(Localization.getLocalized("Achievements Score:") + " " + achievementScore, screen, 32, StaticColorsVars.GRAY);
 
 		if (selectedAchievement != null) {
 			
@@ -172,7 +169,7 @@ public class AchievementsDisplay extends Display {
 			}*/
 	
 			// Achievement description.
-			menus[1].setEntries(StringEntry.useLines(Color.GRAY, Font.getLines(
+			menus[1].setEntries(StringEntry.useLines(StaticColorsVars.GRAY, Font.getLines(
 				Localization.getLocalized(selectedAchievement.description), 
 				menus[1].getBounds()
 				.getSize().width,
@@ -183,7 +180,7 @@ public class AchievementsDisplay extends Display {
 		}
 
 		// Help text.
-		Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 24, Color.DARK_GRAY);
+		Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 24, StaticColorsVars.DARK_GRAY);
 	}
 
 	@Override
@@ -218,9 +215,9 @@ public class AchievementsDisplay extends Display {
                 @Override
                 public int getColor(boolean isSelected) {
                     if (achievements.get(id).getUnlocked()) {
-                        return Color.GREEN;
+                        return StaticColorsVars.GREEN;
                     } else {
-                        return Color.GRAY;
+                        return StaticColorsVars.GRAY;
                     }
                 }
             });

@@ -6,10 +6,7 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.graphic.Color;
-import minicraft.graphic.Font;
-import minicraft.graphic.Screen;
-import minicraft.graphic.Sprite;
+import minicraft.graphic.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
@@ -56,7 +53,7 @@ public abstract class Item {
         
         if (inInventory) {
             String shortname = displayName.length() > 20 ? displayName.substring(0, 20) : displayName;
-            Font.draw(shortname, screen, x + 8, y, Color.WHITE);
+            Font.draw(shortname, screen, x + 8, y, StaticColorsVars.WHITE);
         } else {
             Font.draw(displayName, screen, x + 8, y, Color.get(0, 555));
         }

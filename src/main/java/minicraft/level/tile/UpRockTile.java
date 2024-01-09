@@ -9,10 +9,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.graphic.Color;
-import minicraft.graphic.ConnectorSprite;
-import minicraft.graphic.Screen;
-import minicraft.graphic.Sprite;
+import minicraft.graphic.*;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -82,7 +79,7 @@ public class UpRockTile extends Tile {
 		Sound.genericHurt.playOnLevel(x << 4, y << 4);
 		level.add(new SmashParticle(x << 4, y << 4));
 		
-		level.add(new TextParticle("" + hurtDamage, (x << 4) + 8, (y << 4) + 8, Color.DARK_RED));
+		level.add(new TextParticle("" + hurtDamage, (x << 4) + 8, (y << 4) + 8, StaticColorsVars.DARK_RED));
 		if (damage >= maxHealth) {
 
 			if (dropCoal) {

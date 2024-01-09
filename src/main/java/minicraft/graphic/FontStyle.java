@@ -38,7 +38,7 @@ public class FontStyle {
 	private int padY = 0;
 
 	public FontStyle() {
-		this(Color.WHITE);
+		this(StaticColorsVars.WHITE);
 	}
 
 	public FontStyle(int mainColor) {

@@ -6,6 +6,7 @@ import minicraft.core.io.Localization;
 import minicraft.graphic.Color;
 import minicraft.graphic.Font;
 import minicraft.graphic.Screen;
+import minicraft.graphic.StaticColorsVars;
 
 public class InputEntry extends ListEntry {
 
@@ -73,9 +74,9 @@ public class InputEntry extends ListEntry {
 
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		if (colon == true) {
-			Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.DARK_GREEN : COLOR_UNSELECTED : Color.DARK_RED);
+			Font.draw(toString(), screen, x, y, isValid() ? isSelected ? StaticColorsVars.DARK_GREEN : COLOR_UNSELECTED : StaticColorsVars.DARK_RED);
 		} else {
-			Font.draw(toString().replace(": ", " "), screen, x, y, isValid() ? isSelected ? Color.GREEN : COLOR_UNSELECTED : Color.DARK_RED);
+			Font.draw(toString().replace(": ", " "), screen, x, y, isValid() ? isSelected ? StaticColorsVars.GREEN : COLOR_UNSELECTED : StaticColorsVars.DARK_RED);
 		}
 	}
 

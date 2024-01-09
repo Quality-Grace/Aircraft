@@ -36,35 +36,6 @@ public class Color {
 	 * deal with rgbBytes.
 	 */
 
-	public static final int TRANSPARENT = Color.get(0, 0);
-	public static final int WHITE = Color.get(1, 255);
-	public static final int GRAY = Color.get(1, 153);
-	public static final int DARK_GRAY = Color.get(1, 51);
-	public static final int BLACK = Color.get(1, 0);
-	public static final int RED = Color.get(1, 198, 44, 44);
-	public static final int DARK_RED = Color.get(1, 166, 38, 38);
-	public static final int GREEN = Color.get(1, 77, 212, 77);
-	public static final int DARK_GREEN = Color.get(1, 56, 156, 56);
-	public static final int BLUE = Color.get(1, 32, 32, 136);
-	public static final int YELLOW = Color.get(1, 254, 254, 0);
-	public static final int MAGENTA = Color.get(1, 255, 0, 255);
-	public static final int CYAN = Color.get(1, 90, 204, 204);
-	public static final int ORANGE = Color.get(1, 255, 138, 28);
-
-	public static final char COLOR_CHAR = '\u00A7';
-
-	public static final String TRANSPARENT_CODE = Color.toStringCode(Color.TRANSPARENT);
-	public static final String WHITE_CODE = Color.toStringCode(Color.WHITE);
-	public static final String GRAY_CODE = Color.toStringCode(Color.GRAY);
-	public static final String DARK_GRAY_CODE = Color.toStringCode(Color.DARK_GRAY);
-	public static final String BLACK_CODE = Color.toStringCode(Color.BLACK);
-	public static final String RED_CODE = Color.toStringCode(Color.RED);
-	public static final String GREEN_CODE = Color.toStringCode(Color.GREEN);
-	public static final String BLUE_CODE = Color.toStringCode(Color.BLUE);
-	public static final String YELLOW_CODE = Color.toStringCode(Color.YELLOW);
-	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
-	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
-
 	/**
 	 * This returns a minicraftrgb. alpha should be between 0-1, red, green, and blue should be 0-255
 	 */
@@ -77,8 +48,8 @@ public class Color {
 	}
 
 	public static String toStringCode(int color) {
-		return new String(new char[] { 
-			Color.COLOR_CHAR, 
+		return new String(new char[] {
+				StaticColorsVars.COLOR_CHAR,
 			(char) ((color >> 24) & 0xFF), // Alpha
 			(char) ((color >> 16) & 0xFF), // Red
 			(char) ((color >> 8) & 0xFF), // Blue

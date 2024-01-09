@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import minicraft.graphic.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,11 +17,6 @@ import minicraft.core.Renderer;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
-import minicraft.graphic.Color;
-import minicraft.graphic.Font;
-import minicraft.graphic.Point;
-import minicraft.graphic.Screen;
-import minicraft.graphic.Sprite;
 import minicraft.level.Level;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
@@ -84,7 +80,7 @@ public class TitleDisplay extends Display {
 			new SelectEntry("Credits", () -> Game.setDisplay(new EndGameCreditsDisplay())),
 			new SelectEntry("Help", () -> Game.setDisplay(new Display(true, new Menu.Builder(true, 2, RelPos.CENTER,
 					new BlankEntry(),
-					new LinkEntry(Color.CYAN, "Minicraft discord", "https://discord.me/minicraft"),
+					new LinkEntry(StaticColorsVars.CYAN, "Minicraft discord", "https://discord.me/minicraft"),
 					new BlankEntry(),
 					new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
 					new SelectEntry("Story guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
@@ -118,7 +114,7 @@ public class TitleDisplay extends Display {
 			}
 		}
 
-		if (TimeData.month() == Month.DECEMBER) {
+		/*if (TimeData.month() == Month.DECEMBER) {
 			if (TimeData.day() == 19) rand = 1;
 			if (TimeData.day() == 25) rand = 2;
 		} else {
@@ -155,7 +151,7 @@ public class TitleDisplay extends Display {
 			if (TimeData.day() == 10) rand = 6;
 		} else {
 			rand = random.nextInt(splashes.size() - 3) + 3;
-		}
+		}*/
 
 		World.levels = new Level[World.levels.length];
 
@@ -234,11 +230,11 @@ public class TitleDisplay extends Display {
 			/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 			int textColor = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
 			int splashColor =
-				isblue ? Color.BLUE :
-				isRed ? Color.RED :
-				isGreen ? Color.GREEN :
-				isOrange ? Color.ORANGE :
-				isYellow ? Color.YELLOW :
+				isblue ? StaticColorsVars.BLUE :
+				isRed ? StaticColorsVars.RED :
+				isGreen ? StaticColorsVars.GREEN :
+				isOrange ? StaticColorsVars.ORANGE :
+				isYellow ? StaticColorsVars.YELLOW :
 			Color.get(1, textColor * 51, textColor * 51, textColor * 25);
 	    	
 	        Font.drawCentered(splashes.get(rand), screen, 101, splashColor & 2);
@@ -247,8 +243,8 @@ public class TitleDisplay extends Display {
 	        Font.draw("Mod by TheBigEye", screen, 4, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
 	        Font.draw("Mod by TheBigEye", screen, 4, Screen.h - 10, Color.get(-1, 240, 240, 240));
 	        
-	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (10 * 8) - 2, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
-	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (10 * 8) - 2, Screen.h - 10, Color.get(-1, 240, 240, 240));
+	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (11 * 8) - 1, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
+	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (11 * 8) - 1, Screen.h - 10, Color.get(-1, 240, 240, 240));
 	    }
 
 	    int transitionStart = Math.max(-140, -(time * 2));

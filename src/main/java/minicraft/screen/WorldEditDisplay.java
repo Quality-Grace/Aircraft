@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.graphic.StaticColorsVars;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -35,9 +36,9 @@ public class WorldEditDisplay extends Display {
 	private boolean confirm;
 
 	enum Action {
-		Copy("C", Color.BLUE),
-		Rename("R", Color.GREEN),
-		Delete("D", Color.RED);
+		Copy("C", StaticColorsVars.BLUE),
+		Rename("R", StaticColorsVars.GREEN),
+		Delete("D", StaticColorsVars.RED);
 
 		public final String key;
 		public final int color;
@@ -163,8 +164,8 @@ public class WorldEditDisplay extends Display {
 		super.render(screen);
 		Font.drawCentered(Localization.getLocalized("Select a World to " + action), screen, 0, action.color);
 
-		Font.drawCentered(Game.input.getMapping("select") + Localization.getLocalized(" to confirm"), screen, Screen.h - 60, Color.GRAY);
-		Font.drawCentered(Game.input.getMapping("exit") + Localization.getLocalized(" to return"), screen, Screen.h - 40, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("select") + Localization.getLocalized(" to confirm"), screen, Screen.h - 60, StaticColorsVars.GRAY);
+		Font.drawCentered(Game.input.getMapping("exit") + Localization.getLocalized(" to return"), screen, Screen.h - 40, StaticColorsVars.GRAY);
 	}
 
 	private static List<ListEntry> getConfirmMenuEntries(Action action) {
@@ -187,7 +188,7 @@ public class WorldEditDisplay extends Display {
 			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
 		}
 
-		entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+		entries.addAll(Arrays.asList(StringEntry.useLines(StaticColorsVars.WHITE, "",
 			Game.input.getMapping("select") + Localization.getLocalized(" to confirm"),
 			Game.input.getMapping("exit") + Localization.getLocalized(" to cancel"))
 		));

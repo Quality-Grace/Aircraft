@@ -4,11 +4,12 @@ import minicraft.core.io.InputHandler;
 import minicraft.graphic.Color;
 import minicraft.graphic.Font;
 import minicraft.graphic.Screen;
+import minicraft.graphic.StaticColorsVars;
 
 public abstract class ListEntry {
 
-    public static final int COLOR_UNSELECTED = Color.GRAY;
-    public static final int COLOR_SELECTED = Color.WHITE;
+    public static final int COLOR_UNSELECTED = StaticColorsVars.GRAY;
+    public static final int COLOR_SELECTED = StaticColorsVars.WHITE;
 
     private boolean selectable = true;
     private boolean visible = true;
@@ -32,7 +33,7 @@ public abstract class ListEntry {
 
         String string = toString();
 
-        Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+        Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + StaticColorsVars.WHITE_CODE), screen, x, y);
     }
 
     /**
@@ -46,7 +47,7 @@ public abstract class ListEntry {
      */
     public void render(Screen screen, int x, int y, boolean isSelected) {
         if (visible) {
-			if (toString().contains(String.valueOf(Color.COLOR_CHAR))) {
+			if (toString().contains(String.valueOf(StaticColorsVars.COLOR_CHAR))) {
 				Font.drawColor(Color.toStringCode(getColor(isSelected)) + toString(), screen, x, y);
 			} else {
 				Font.draw(toString(), screen, x, y, getColor(isSelected));

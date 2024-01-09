@@ -237,7 +237,7 @@ public class Screen {
 	                } else {
 	                    // Inserts the colors into the image
 	                    if (fullbright) {
-	                        pixels[position] = Color.WHITE; // mob color when hit
+	                        pixels[position] = StaticColorsVars.WHITE; // mob color when hit
 	                    } else {
 	                        if (color != 0) { // full sprite color
 	                            pixels[position] = color;

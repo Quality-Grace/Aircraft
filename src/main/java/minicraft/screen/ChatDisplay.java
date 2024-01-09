@@ -7,11 +7,7 @@ import java.util.List;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
-import minicraft.graphic.Color;
-import minicraft.graphic.Font;
-import minicraft.graphic.Point;
-import minicraft.graphic.Screen;
-import minicraft.graphic.SpriteSheet;
+import minicraft.graphic.*;
 import minicraft.screen.entry.InputEntry;
 import minicraft.util.Command;
 
@@ -78,12 +74,12 @@ public class ChatDisplay extends Display {
     public void render(Screen screen) {
         Font.drawBox(screen, 8, (Screen.h - 16) - 66, 52, 8);
         Font.drawBox(screen, 8, (Screen.h - 16), 52, 1);
-        Font.draw("[Amy]", screen, 8, Screen.h - 16, Color.GREEN);
+        Font.draw("[Amy]", screen, 8, Screen.h - 16, StaticColorsVars.GREEN);
         
 		for (int j = 0; j < 4; j++) {
 			screen.render(200 + j * 8, Screen.h - 90, 3 + 21 * 32, 0, 3);
 		}
-        Font.drawCentered("Chat", screen, Screen.h - 90, Color.YELLOW);
+        Font.drawCentered("Chat", screen, Screen.h - 90, StaticColorsVars.YELLOW);
         
         // Render the messages
         List<String> messages = new ArrayList<>();
@@ -98,8 +94,8 @@ public class ChatDisplay extends Display {
         
         int lineNumber = 0;
         for (int j = Math.max(0, messages.size() - 7); j < messages.size(); j++) {
-        	Font.draw("<Amy>", screen, 8, (lineNumber * 8) + Screen.h - 80, Color.DARK_GREEN);
-            Font.draw(messages.get(j), screen, 6 * 8 + 4, (lineNumber * 8) + Screen.h - 80, Color.GRAY);
+        	Font.draw("<Amy>", screen, 8, (lineNumber * 8) + Screen.h - 80, StaticColorsVars.DARK_GREEN);
+            Font.draw(messages.get(j), screen, 6 * 8 + 4, (lineNumber * 8) + Screen.h - 80, StaticColorsVars.GRAY);
             lineNumber++;
         }
         

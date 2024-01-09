@@ -5,6 +5,7 @@ import minicraft.core.io.Localization;
 import minicraft.graphic.Color;
 import minicraft.graphic.Screen;
 import minicraft.graphic.Sprite;
+import minicraft.graphic.StaticColorsVars;
 import minicraft.screen.Display;
 import minicraft.screen.Menu;
 import minicraft.screen.RelPos;
@@ -17,16 +18,16 @@ public class MobsTutorial extends Display {
 
     public MobsTutorial() {
         super(true, new Menu.Builder(false, 6, RelPos.LEFT,
-                new StringEntry("            " + Localization.getLocalized("Mobs?, What's that."), Color.ORANGE),
+                new StringEntry("            " + Localization.getLocalized("Mobs?, What's that."), StaticColorsVars.ORANGE),
                 new BlankEntry(),
-                new StringEntry(Localization.getLocalized("Mobs are all the creatures that inhabit"), Color.WHITE),
-                new StringEntry(Localization.getLocalized("the world, they can be peaceful like"), Color.WHITE),
-                new StringEntry(Localization.getLocalized("Animals, Villagers, etc, and they can be"), Color.WHITE),
-                new StringEntry(Localization.getLocalized("Hostile like Zombies, Skeletons, etc."), Color.WHITE),
-                new BlankEntry(), new StringEntry(Localization.getLocalized("Peaceful mobs:"), Color.GREEN),
+                new StringEntry(Localization.getLocalized("Mobs are all the creatures that inhabit"), StaticColorsVars.WHITE),
+                new StringEntry(Localization.getLocalized("the world, they can be peaceful like"), StaticColorsVars.WHITE),
+                new StringEntry(Localization.getLocalized("Animals, Villagers, etc, and they can be"), StaticColorsVars.WHITE),
+                new StringEntry(Localization.getLocalized("Hostile like Zombies, Skeletons, etc."), StaticColorsVars.WHITE),
+                new BlankEntry(), new StringEntry(Localization.getLocalized("Peaceful mobs:"), StaticColorsVars.GREEN),
                 new BlankEntry(), new BlankEntry(),
-                new StringEntry(Localization.getLocalized("Hostile mobs:"), Color.RED), new BlankEntry(),
-                new BlankEntry()).setTitle("Tutorial", Color.YELLOW).createMenu());
+                new StringEntry(Localization.getLocalized("Hostile mobs:"), StaticColorsVars.RED), new BlankEntry(),
+                new BlankEntry()).setTitle("Tutorial", StaticColorsVars.YELLOW).createMenu());
     }
 
     @Override

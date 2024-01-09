@@ -80,12 +80,12 @@ public class Font {
     
     public static void drawColor(String message, Screen screen, int x, int y) {
         // set default color message if it doesn't have initially
-        if (message.charAt(0) != Color.COLOR_CHAR) {
-            message = Color.WHITE_CODE + message;
+        if (message.charAt(0) != StaticColorsVars.COLOR_CHAR) {
+            message = StaticColorsVars.WHITE_CODE + message;
         }
 
         int leading = 0;
-        for (String data : message.split(String.valueOf(Color.COLOR_CHAR))) {
+        for (String data : message.split(String.valueOf(StaticColorsVars.COLOR_CHAR))) {
             if (data.isEmpty()) {
                 continue;
             }
@@ -99,7 +99,7 @@ public class Font {
             } catch (IndexOutOfBoundsException ignored) {
                 // bad formatted colored string
                 text = data;
-                color = Color.WHITE_CODE;
+                color = StaticColorsVars.WHITE_CODE;
             }
 
             Font.draw(text, screen, x + leading, y, Color.get(color));
@@ -132,7 +132,7 @@ public class Font {
 		for (int i = 0; i < text.length(); ++i) {
 			char chr = text.charAt(i);
 
-			if (chr == Color.COLOR_CHAR) {
+			if (chr == StaticColorsVars.COLOR_CHAR) {
 				i += 5;
 				continue;
 			}

@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import minicraft.graphic.*;
 import org.tinylog.Logger;
 
 import minicraft.core.io.Settings;
@@ -21,16 +22,8 @@ import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.EyeQueen;
 import minicraft.entity.mob.Player;
-import minicraft.graphic.Color;
-import minicraft.graphic.Ellipsis;
 import minicraft.graphic.Ellipsis.DotUpdater.TickUpdater;
 import minicraft.graphic.Ellipsis.SmoothEllipsis;
-import minicraft.graphic.Font;
-import minicraft.graphic.FontStyle;
-import minicraft.graphic.Rectangle;
-import minicraft.graphic.Screen;
-import minicraft.graphic.Sprite;
-import minicraft.graphic.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -274,7 +267,7 @@ public class Renderer extends Game {
 
 		// Shows active item sprite and name in bottom toolbar.
 		if (player.activeItem != null) {
-			player.activeItem.renderHUD(screen, (Screen.w / 2) - (Font.textWidth(player.activeItem.getDisplayName()) / 2) , Screen.h - 9, Color.GRAY);
+			player.activeItem.renderHUD(screen, (Screen.w / 2) - (Font.textWidth(player.activeItem.getDisplayName()) / 2) , Screen.h - 9, StaticColorsVars.GRAY);
 		}
 
 		ArrayList<String> permStatus = new ArrayList<>();
@@ -288,7 +281,7 @@ public class Renderer extends Game {
 		}
 
 		if (!permStatus.isEmpty()) {
-			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 25).setRelTextPos(RelPos.TOP).setShadowType(Color.DARK_GRAY, false);
+			FontStyle style = new FontStyle(StaticColorsVars.WHITE).setYPos(Screen.h / 2 - 25).setRelTextPos(RelPos.TOP).setShadowType(StaticColorsVars.DARK_GRAY, false);
 			Font.drawParagraph(permStatus, screen, style, 1);
 		}
 
@@ -305,7 +298,7 @@ public class Renderer extends Game {
 			}
 
 			// draw each current notification, with shadow text effect.
-			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false).setYPos(Screen.h * 2 / 5).setRelTextPos(RelPos.TOP, false);
+			FontStyle style = new FontStyle(StaticColorsVars.WHITE).setShadowType(StaticColorsVars.DARK_GRAY, false).setYPos(Screen.h * 2 / 5).setRelTextPos(RelPos.TOP, false);
 			Font.drawParagraph(notifications, screen, style, 0);
 		}
 
@@ -329,10 +322,10 @@ public class Renderer extends Game {
 			}
 
 			Font.draw("Time left " + (hours > 0 ? hours + "h " : "") + minutes + "m " + seconds + "s", screen, Screen.w / 2 - 9 * 8, 2, timeTextColor);
-			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);
+			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, StaticColorsVars.WHITE);
 
 			if (player.getMultiplier() > 1) {
-				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
+				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : StaticColorsVars.RED;
 				String mult = "X" + player.getMultiplier();
 
 				Font.draw(mult, screen, Screen.w - Font.textWidth(mult) - 2, 4 + 2 * 8, multColor);
@@ -370,7 +363,7 @@ public class Renderer extends Game {
 				for (int j = 0; j < title.length(); j++) {
 					screen.render(311 + (j * 8) - 1, 9, 3 + 21 * 32, 0, 3);
 				}
-				Font.draw(title, screen, 310, 9, Color.YELLOW);
+				Font.draw(title, screen, 310, 9, StaticColorsVars.YELLOW);
 				
 				Font.draw(potionType + " ", screen, 300 , 17 + effectIndex * Font.textHeight(), potionType.displayColor);
 				Font.draw("(" + minutes + ":" + (seconds < 10? "0" + seconds:seconds) + ")", screen, 373 , 17 + effectIndex * Font.textHeight(), potionType.displayColor);
@@ -514,7 +507,7 @@ public class Renderer extends Game {
 					screen.render(x + (bx * 2), y, 1 + 25 * 32, 0, 3);
 				}
 				
-				FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.BLACK, true).setYPos(2);
+				FontStyle style = new FontStyle(StaticColorsVars.WHITE).setShadowType(StaticColorsVars.BLACK, true).setYPos(2);
 		
 				Font.drawParagraph(title, screen, style, 2);
 			}
@@ -585,8 +578,8 @@ public class Renderer extends Game {
 				info.add("Moon phase: " + player.isNiceNight + " -> " + player.nightCount + "/4");
 			}
 
-			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.BLACK, true).setXPos(1).setYPos(1);
-			FontStyle substyle = new FontStyle(Color.WHITE).setShadowType(Color.BLACK, true).setXPos(Screen.w - 121).setYPos(1);
+			FontStyle style = new FontStyle(StaticColorsVars.WHITE).setShadowType(StaticColorsVars.BLACK, true).setXPos(1).setYPos(1);
+			FontStyle substyle = new FontStyle(StaticColorsVars.WHITE).setShadowType(StaticColorsVars.BLACK, true).setXPos(Screen.w - 121).setYPos(1);
 
 			Font.drawParagraph(info, screen, style, 2);
 			Font.drawParagraph(subinfo, screen, substyle, 2);
