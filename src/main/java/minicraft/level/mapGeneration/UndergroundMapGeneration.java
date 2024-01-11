@@ -2,6 +2,7 @@ package minicraft.level.mapGeneration;
 
 import minicraft.level.LevelGen;
 import minicraft.level.Structure;
+import minicraft.level.mapGeneration.mapVerification.UnderGroundMapVerifier;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
@@ -17,20 +18,13 @@ public class UndergroundMapGeneration extends Map {
     public void createAndValidateMap() {
         LoadingDisplay.setMessage("Generating the caves!");
 
-        int[] count;
-        do {
-            map = new short[2][w*h];
-            createMap();
-
-            count = countTiles();
-        } while (count[Tiles.get("Rock").id & 0xffff] < 100
-                || count[Tiles.get("Dirt").id & 0xffff] < 100
-                || count[(Tiles.get("Iron Ore").id & 0xffff) + depth - 1] < 20
-                || depth < 3 && count[Tiles.get("Stairs Down").id & 0xffff] < w / 32);
+        UnderGroundMapVerifier underGroundMapVerifier = new UnderGroundMapVerifier(this);
+        underGroundMapVerifier.validateMap();
     }
 
     @Override
     public void createMap() {
+        map = new short[2][w*h];
         /*
          * This generates the 3 levels of cave, iron, gold and gem
          */
@@ -53,6 +47,10 @@ public class UndergroundMapGeneration extends Map {
         } else {
             generateStairsUnderground();
         }
+    }
+
+    public int getDepth(){
+        return this.depth;
     }
 
     private void generateOres() {

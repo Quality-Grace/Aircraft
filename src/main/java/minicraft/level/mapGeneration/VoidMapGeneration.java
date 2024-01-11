@@ -1,6 +1,7 @@
 package minicraft.level.mapGeneration;
 
 import minicraft.level.LevelGen;
+import minicraft.level.mapGeneration.mapVerification.VoidMapVerifier;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
@@ -15,19 +16,13 @@ public class VoidMapGeneration extends Map {
     public void createAndValidateMap() {
         LoadingDisplay.setMessage("Generating the Void!");
 
-        int[] count;
-        do {
-            map = new short[2][w*h];
-            createMap();
-
-            count = countTiles();
-        } while (count[Tiles.get("Rock").id & 0xffff] < 100
-                || count[Tiles.get("Grass").id & 0xffff] < 100
-                || count[Tiles.get("Oak Tree").id & 0xffff] < 100);
+        VoidMapVerifier voidMapVerifier = new VoidMapVerifier(this);
+        voidMapVerifier.validateMap();
     }
 
     @Override
     public void createMap() {
+        map = new short[2][w*h];
         LoadingDisplay.setMessage("Checking level");
         fillMapWithBlocks();
 

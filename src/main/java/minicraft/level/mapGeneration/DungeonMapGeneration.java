@@ -2,6 +2,7 @@ package minicraft.level.mapGeneration;
 
 import minicraft.level.LevelGen;
 import minicraft.level.Structure;
+import minicraft.level.mapGeneration.mapVerification.DungeonMapVerifier;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
@@ -14,20 +15,13 @@ public class DungeonMapGeneration extends Map{
     @Override
     public void createAndValidateMap() {
         LoadingDisplay.setMessage("Generating the Dungeon!");
-
-        int[] count;
-        do {
-            map = new short[2][w*h];
-            createMap();
-
-            count = countTiles();
-        } while (count[Tiles.get("Obsidian").id & 0xffff] < 100
-                || count[Tiles.get("Obsidian Wall").id & 0xffff] < 100
-                || count[Tiles.get("Raw Obsidian").id & 0xffff] < 100);
+        DungeonMapVerifier dungeonMapVerifier = new DungeonMapVerifier(this);
+        dungeonMapVerifier.validateMap();
     }
 
     @Override
     public void createMap() {
+        map = new short[2][w*h];
         LoadingDisplay.setMessage("Checking for noise");
         fillMapWithBlocksAndFluids();
 

@@ -2,6 +2,7 @@ package minicraft.level.mapGeneration;
 
 import minicraft.core.io.Settings;
 import minicraft.level.LevelGen;
+import minicraft.level.mapGeneration.mapVerification.TopMapVerifier;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
@@ -18,23 +19,13 @@ public class TopMapGeneration extends Map{
     @Override
     public void createAndValidateMap() {
         LoadingDisplay.setMessage("Generating the Surface!");
-
-        int[] count;
-        do {
-            map = new short[2][w*h];
-            createMap();
-
-            count = countTiles();
-        } while (count[Tiles.get("Rock").id & 0xffff] < 100
-                || count[Tiles.get("Sand").id & 0xffff] < 100
-                || count[Tiles.get("Grass").id & 0xffff] < 100
-                || count[Tiles.get("Oak Tree").id & 0xffff] < 100
-                || count[Tiles.get("Daisy").id & 0xffff] < 100
-                || count[Tiles.get("Stairs Down").id & 0xffff] == 0);
+        TopMapVerifier topMapVerifier = new TopMapVerifier(this);
+        topMapVerifier.validateMap();
     }
 
     @Override
     public void createMap() {
+        map = new short[2][w*h];
         fillMapWithBlocksAndFluids();
 
         // DESERT GENERATION STEP
@@ -252,6 +243,7 @@ public class TopMapGeneration extends Map{
     }
 
     private void mountainGeneration() {
+        String[] tilesToCheck = {"Grass","Snow","Sand","Fir Tree","Oak Tree","Birch Tree","Pine Tree","Ice Spike", "Rose", "Lawn", "Dandelion","Poppy","Daisy"};
         for (int j = 0; j < h; j++) {
             for (int x = 0; x < w; x++) {
                 if ( Tiles.idEqualsTile(map[0][x + j * w],"Up Rock")) {
@@ -259,7 +251,7 @@ public class TopMapGeneration extends Map{
                     for (int tx = x - (1 + random.nextInt(2)); tx <= x + (1 + random.nextInt(2)); tx++) {
                         for (int ty = j - (1 + random.nextInt(2)); ty <= j + (1 + random.nextInt(2)); ty++) {
                             if ((tx >= 0 && ty >= 0 && tx <= w && ty <= h) && (tx != x || ty != j)) {
-                                if (Tiles.arrayContainsTileWithId(map[0][tx+ty*w], new String[]{"Grass","Snow","Sand","Fir Tree","Oak Tree","Birch Tree","Pine Tree","Ice Spike", "Rose", "Lawn", "Dandelion","Poppy","Daisy"})) {
+                                if (Tiles.arrayContainsTileWithId(map[0][tx+ty*w], tilesToCheck)) {
                                     Tiles.addTileIdToArray(map[0], x+j*w,"Rock");
                                     break check_mountains;
                                 }
@@ -399,6 +391,7 @@ public class TopMapGeneration extends Map{
 
     private void tundraGeneration() {
         int tundraThreshold = w*h / (terrainType.equals("Tundra") ? 600 : 2840);
+        String[] tilesToCheck = {"Grass", "Sand", "Lawn"};
 
         for (int i = 0; i < tundraThreshold; i++) {
             int xs = (w/2 - random.nextInt(w/2)) - 32;  // [0 0]
@@ -417,7 +410,7 @@ public class TopMapGeneration extends Map{
                     for (int yy = yo - (1 + random.nextInt(8)); yy <= yo + (1 + random.nextInt(8)); yy++) { // Height modifier
                         for (int xx = xo - (1 + random.nextInt(8)); xx <= xo + (1 + random.nextInt(4)); xx++) { // Width modifier
                             if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-                                if (Tiles.arrayContainsTileWithId(map[0][xx+yy*w], new String[]{"Grass", "Sand", "Lawn"})) {
+                                if (Tiles.arrayContainsTileWithId(map[0][xx+yy*w], tilesToCheck)) {
                                     Tiles.addTileIdToArray(map[0],xx+yy*w,"Snow");
                                 } else if (xx > waterThreshold && xx < w - waterThreshold && yy > waterThreshold && yy < h - waterThreshold && Tiles.idEqualsTile(map[0][xx+yy*w], "Water")) {
                                     Tiles.addTileIdToArray(map[0],xx+yy*w,"Ice");

@@ -1,6 +1,7 @@
 package minicraft.level.mapGeneration;
 
 import minicraft.level.LevelGen;
+import minicraft.level.mapGeneration.mapVerification.SkyMapVerifier;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
@@ -14,20 +15,14 @@ public class SkyMapGeneration extends Map{
     @Override
     public void createAndValidateMap() {
         LoadingDisplay.setMessage("Generating the Heaven!");
-
-        int[] count;
-        do {
-            map = new short[2][w*h];
-            createMap();
-
-            count = countTiles();
-        } while (count[Tiles.get("Cloud").id & 0xffff] < 2000
-                || count[Tiles.get("Stairs Down").id & 0xffff] < w / 64);
+        SkyMapVerifier skyMapVerifier = new SkyMapVerifier(this);
+        skyMapVerifier.validateMap();
     }
 
     // Sky dimension generation
     @Override
     public void createMap() {
+        map = new short[2][w*h];
         LoadingDisplay.setMessage("Checking for noise");
         generateClouds();
 
