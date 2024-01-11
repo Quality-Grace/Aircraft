@@ -9,6 +9,7 @@ import minicraft.graphic.Color;
 import minicraft.graphic.Font;
 import minicraft.graphic.Screen;
 import minicraft.graphic.Sprite;
+import minicraft.item.AdditionStrategy;
 
 public class DeathChest extends Chest {
 	private static Sprite normalSprite = new Sprite(6, 30, 2, 2, 2);
@@ -17,6 +18,8 @@ public class DeathChest extends Chest {
 	public int time; // time passed (used for death chest despawn)
 	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // what direction the red shade (redtick) is changing.
+
+	private Object[] params;
 
 	/**
 	 * Creates a custom chest with the name Death Chest
@@ -38,7 +41,10 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		getInventory().addAll(player.getInventory());
+
+		getInventory().setStrategy(new AdditionStrategy());
+		params[0] = player.getInventory();
+		getInventory().executeStrategy(params);
 	}
 
 	// for death chest time count, I imagine.
@@ -91,7 +97,11 @@ public class DeathChest extends Chest {
 	@Override
 	public void touchedBy(Entity other) {
 		if (other instanceof Player) {
-			((Player)other).getInventory().addAll(getInventory());
+
+			((Player)other).getInventory().setStrategy(new AdditionStrategy());
+			params[0] = getInventory();
+			((Player)other).getInventory().executeStrategy(params);
+
 			remove();
 			Game.notifications.add("Death chest retrieved!");
 		}

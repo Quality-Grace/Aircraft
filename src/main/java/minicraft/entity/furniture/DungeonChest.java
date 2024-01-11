@@ -1,5 +1,6 @@
 package minicraft.entity.furniture;
 
+import minicraft.item.*;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -14,10 +15,6 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.graphic.Color;
 import minicraft.graphic.Sprite;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.StackableItem;
 
 public class DungeonChest extends Chest {
     private static final Sprite OPEN_SPRITE = new Sprite(4, 30, 2, 2, 2);
@@ -25,6 +22,8 @@ public class DungeonChest extends Chest {
 
     private boolean isLocked;
     private int tickTime = 0;
+
+    private Object[] params;
 
     /**
      * Creates a custom chest with the name Dungeon Chest.
@@ -72,14 +71,22 @@ public class DungeonChest extends Chest {
     public boolean use(Player player) {
         if (isLocked) {
             boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
-            boolean invKey = player.getInventory().count(Items.get("Key")) > 0;
+
+            player.getInventory().setStrategy(new CountStrategy());
+            params[0] = Items.get("Key");
+
+            boolean invKey = (int)(player.getInventory().executeStrategy(params)) > 0;
+
             if (activeKey || invKey) { // if the player has a key...
                 if (!Game.isMode("Creative")) { // remove the key unless on creative mode.
                     if (activeKey) { // remove activeItem
                         StackableItem key = (StackableItem) player.activeItem;
                         key.count--;
                     } else { // remove from inv
-                        player.getInventory().removeItem(Items.get("Key"));
+                        player.getInventory().setStrategy(new RemoveStrategy());
+                        params[0] = Items.get("Key");
+                        player.getInventory().executeStrategy(params);
+
                     }
                 }
 

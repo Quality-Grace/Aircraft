@@ -118,7 +118,7 @@ public class TitleDisplay extends Display {
 			}
 		}
 
-		/*if (TimeData.month() == Month.DECEMBER) {
+		if (TimeData.month() == Month.DECEMBER) {
 			if (TimeData.day() == 19) rand = 1;
 			if (TimeData.day() == 25) rand = 2;
 		} else {
@@ -155,7 +155,7 @@ public class TitleDisplay extends Display {
 			if (TimeData.day() == 10) rand = 6;
 		} else {
 			rand = random.nextInt(splashes.size() - 3) + 3;
-		}*/
+		}
 
 		World.levels = new Level[World.levels.length];
 
@@ -247,8 +247,8 @@ public class TitleDisplay extends Display {
 	        Font.draw("Mod by TheBigEye", screen, 4, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
 	        Font.draw("Mod by TheBigEye", screen, 4, Screen.h - 10, Color.get(-1, 240, 240, 240));
 	        
-	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (11 * 8) - 1, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
-	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (11 * 8) - 1, Screen.h - 10, Color.get(-1, 240, 240, 240));
+	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (10 * 8) - 2, Screen.h - 9, Color.get(-1, 240, 240, 240) % 2);
+	        Font.draw("Version " + Game.BUILD, screen, Screen.w - (10 * 8) - 2, Screen.h - 10, Color.get(-1, 240, 240, 240));
 	    }
 
 	    int transitionStart = Math.max(-140, -(time * 2));

@@ -12,6 +12,7 @@ import minicraft.level.tile.Tiles;
 
 public class BucketItem extends StackableItem {
 
+	private Object[] params;
 	public enum Fill {
 		Empty(Tiles.get("Hole"), 2), Water(Tiles.get("Water"), 0), Lava(Tiles.get("Lava"), 1);
 
@@ -96,7 +97,9 @@ public class BucketItem extends StackableItem {
 
 		// this item object is a stack of buckets.
 		count--;
-		player.getInventory().add(new BucketItem(newFill));
+		player.getInventory().setStrategy(new AdditionStrategy());
+		params[0] = new BucketItem(newFill);
+		player.getInventory().executeStrategy(params);
 		return this;
 	}
 

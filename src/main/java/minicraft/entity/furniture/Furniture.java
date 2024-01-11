@@ -2,6 +2,7 @@ package minicraft.entity.furniture;
 
 import java.util.Random;
 
+import minicraft.item.AdditionStrategy;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -32,6 +33,8 @@ public class Furniture extends Entity {
     private Direction pushDir = Direction.NONE; // the direction to push the furniture
     public Sprite sprite;
     public String name;
+
+    private Object[] params;
 
     /**
      * Constructor for the furniture entity. Size will be set to 3.
@@ -123,7 +126,12 @@ public class Furniture extends Entity {
             
             if (!Game.isMode("Creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem)) {
             	// put whatever item the player is holding into their inventory
-            	player.getInventory().add(0, player.activeItem); 
+                player.getInventory().setStrategy(new AdditionStrategy());
+                params[0] = 0;
+                params[1] = player.activeItem;
+
+                player.getInventory().executeStrategy(params);
+
             }
             
             // make this the player's current item.

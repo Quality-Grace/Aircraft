@@ -11,6 +11,8 @@ public class Recipe {
 	private int amount;
 	private boolean canCraft; // checks if the player can craft the recipe
 
+	private Object[] params;
+
 	public Recipe(String createdItem, String... reqItems) {
 		canCraft = false;
 		String[] sep = createdItem.split("_");
@@ -49,13 +51,18 @@ public class Recipe {
 		if (!Game.isMode("Creative")) {
 			// remove the cost items from the inventory.
 			for (String cost : costs.keySet().toArray(new String[0])) {
-				if (!cost.contains("ALAZIF")) player.getInventory().removeItems(Items.get(cost), costs.get(cost));
+				player.getInventory().setStrategy(new RemoveStrategy());
+				params[0] = Items.get(cost);
+				params[1] = costs.get(cost);
+				if (!cost.contains("ALAZIF")) player.getInventory().executeStrategy(params);
 			}
 		}
 
 		// add the crafted items.
 		for (int i = 0; i < amount; i++) {
-			player.getInventory().add(getProduct());
+			player.getInventory().setStrategy(new AdditionStrategy());
+			params[0] = getProduct();
+			player.getInventory().executeStrategy(params);
 		}
 
 		return true;
@@ -78,7 +85,9 @@ public class Recipe {
 		for (String cost : costs.keySet().toArray(new String[0])) { // cycles through the costs list
 			/// this method ONLY WORKS if costs does not contain two elements such that
 			/// inventory.count will count an item it contains as matching more than once.
-			if (player.getInventory().count(Items.get(cost)) < costs.get(cost)) {
+			player.getInventory().setStrategy(new CountStrategy());
+			params[0] = Items.get(cost);
+			if ( (int)player.getInventory().executeStrategy(params) < costs.get(cost)) {
 				return false;
 			}
 		}

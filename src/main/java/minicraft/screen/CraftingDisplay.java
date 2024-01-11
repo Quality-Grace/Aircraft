@@ -10,6 +10,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.graphic.Point;
 import minicraft.graphic.SpriteSheet;
+import minicraft.item.CountStrategy;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
@@ -24,6 +25,8 @@ public class CraftingDisplay extends Display {
 	private Menu.Builder itemCountMenu, costsMenu;
 
 	private boolean isPersonalCrafter;
+
+	private Object[] params;
 
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player) {
 		this(recipes, title, player, false);
@@ -72,7 +75,9 @@ public class CraftingDisplay extends Display {
 	}
 
 	private int getCurItemCount() {
-		return player.getInventory().count(recipes[recipeMenu.getSelection()].getProduct());
+		player.getInventory().setStrategy(new CountStrategy());
+		params[0] = recipes[recipeMenu.getSelection()].getProduct();
+		return (int)player.getInventory().executeStrategy(params);
 	}
 
 	private ItemListing[] getCurItemCosts() {
@@ -80,7 +85,10 @@ public class CraftingDisplay extends Display {
 		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for (String itemName : costMap.keySet()) {
 			Item cost = Items.get(itemName);
-			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
+
+			player.getInventory().setStrategy(new CountStrategy());
+			params[0] = cost;
+			costList.add(new ItemListing(cost, player.getInventory().executeStrategy(params) + "/" + costMap.get(itemName)));
 		}
 
 		return costList.toArray(new ItemListing[costList.size()]);

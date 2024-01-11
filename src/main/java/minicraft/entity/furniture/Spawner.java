@@ -2,6 +2,7 @@ package minicraft.entity.furniture;
 
 import java.util.ArrayList;
 
+import minicraft.item.*;
 import org.tinylog.Logger;
 
 import minicraft.core.Game;
@@ -17,12 +18,6 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.graphic.Color;
 import minicraft.graphic.Point;
 import minicraft.graphic.Sprite;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
 
 public class Spawner extends Furniture {
@@ -40,6 +35,8 @@ public class Spawner extends Furniture {
 	private int maxMobLevel;
 	private int spawnTick;
 	private int tickTime;
+
+	private Object[] params;
 
 	/**
 	 * Initializes the spawners variables to the corresponding values from the mob.
@@ -242,7 +239,12 @@ public class Spawner extends Furniture {
         if (item instanceof PowerGloveItem && Game.isMode("Creative")) {
         	level.remove(this);
         	if (!(player.activeItem instanceof PowerGloveItem)) {
-        		player.getInventory().add(0, player.activeItem);
+				player.getInventory().setStrategy(new AdditionStrategy());
+				params[0] = 0;
+				params[1] = player.activeItem;
+
+				player.getInventory().executeStrategy(params);
+
         	}
         	player.activeItem = new FurnitureItem(this);
         	return true;

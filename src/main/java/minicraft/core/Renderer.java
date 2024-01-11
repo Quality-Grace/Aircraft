@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import minicraft.item.*;
 import org.tinylog.Logger;
 
 import minicraft.core.io.Settings;
@@ -31,10 +32,6 @@ import minicraft.graphic.Rectangle;
 import minicraft.graphic.Screen;
 import minicraft.graphic.Sprite;
 import minicraft.graphic.SpriteSheet;
-import minicraft.item.Items;
-import minicraft.item.PotionType;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.InfoDisplay;
 import minicraft.screen.LoadingDisplay;
@@ -65,6 +62,8 @@ public class Renderer extends Game {
 	public static boolean renderRain = false;
 
 	private static final Ellipsis ellipsis = (Ellipsis) new SmoothEllipsis(new TickUpdater());
+
+	private static Object[] params;
 
 	public static SpriteSheet[] loadDefaultTextures() {
 	    final String[] SHEETS_PATHS = {
@@ -248,7 +247,9 @@ public class Renderer extends Game {
 			
 			// ARROWS COUNT STATUS
 			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
-				int arrowsCount = player.getInventory().count(Items.arrowItem);
+				player.getInventory().setStrategy(new CountStrategy());
+				params[0] = Items.arrowItem;
+				int arrowsCount = (int)player.getInventory().executeStrategy(params);
 				
 				// Renders the box
 				Font.drawBox(screen, (Screen.w) / 2 - 32 - tool.arrowOffset, (Screen.h - 8) - 13, 3, 1);

@@ -12,10 +12,7 @@ import minicraft.entity.mob.Player;
 import minicraft.graphic.Point;
 import minicraft.graphic.Screen;
 import minicraft.graphic.SpriteSheet;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.Recipe;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 import minicraft.screen.entry.ItemListing;
 
 public class MeltingDisplay extends Display {
@@ -28,6 +25,8 @@ public class MeltingDisplay extends Display {
     @SuppressWarnings("unused")
     private final StackableItem[] fuelList = new StackableItem[] { (StackableItem) Items.get("Coal") }; // Must be a stackable item
     private final StackableItem currentFuel = (StackableItem) Items.get("Coal");
+
+    private Object[] params;
 
     public MeltingDisplay(Crafter.Type type, Player player) {
         ArrayList<Recipe> recipes = type.recipes;
@@ -81,7 +80,9 @@ public class MeltingDisplay extends Display {
     // }
 
     private int getCurItemCount() {
-        return player.getInventory().count(recipes[recipeMenu.getSelection()].getProduct());
+        player.getInventory().setStrategy(new CountStrategy());
+        params[0] = recipes[recipeMenu.getSelection()].getProduct();
+        return (int)player.getInventory().executeStrategy(params);
     }
 
     private ItemListing[] getCurItemCosts() {
@@ -89,7 +90,10 @@ public class MeltingDisplay extends Display {
         HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
         for (String itemName : costMap.keySet()) {
             Item cost = Items.get(itemName);
-            costList.add(new ItemListing(cost, costMap.get(itemName) + "/" + player.getInventory().count(cost)));
+
+            player.getInventory().setStrategy(new CountStrategy());
+            params[0] = cost;
+            costList.add(new ItemListing(cost, costMap.get(itemName) + "/" + player.getInventory().executeStrategy(params)));
         }
 
         return costList.toArray(new ItemListing[0]);

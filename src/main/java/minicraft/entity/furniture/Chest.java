@@ -3,6 +3,7 @@ package minicraft.entity.furniture;
 import java.io.IOException;
 import java.util.List;
 
+import minicraft.item.*;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -11,14 +12,13 @@ import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.graphic.Sprite;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory chestInventory; // Inventory of the chest
+
+	private Object[] params;
 
 	public Chest() {
 		this("Chest");
@@ -49,13 +49,25 @@ public class Chest extends Furniture implements ItemHolder {
 				// System.out.println(line);
 				String[] data = line.split(",");
 				if (!line.startsWith(":")) {
-					chestInventory.tryAdd(Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
+					chestInventory.setStrategy(new TryAddStrategy());
+
+					params[0] = Integer.parseInt(data[0]);
+					params[1] = Items.get(data[1]);
+					params[2] = data.length < 3 ? 1 : Integer.parseInt(data[2]);
+
+					chestInventory.executeStrategy(params);
 
 				} else if (chestInventory.size() == 0) {
 					// adds the "fallback" items to ensure there's some stuff
 					String[] fallbacks = line.substring(1).split(":");
 					for (String item : fallbacks) {
-						chestInventory.add(Items.get(item.split(",")[0]), Integer.parseInt(item.split(",")[1]));
+
+						chestInventory.setStrategy(new AdditionStrategy());
+
+						params[0] = Items.get(item.split(",")[0]);
+						params[1] = Integer.parseInt(item.split(",")[1]);
+
+						chestInventory.executeStrategy(params);
 					}
 				}
 			}

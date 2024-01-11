@@ -11,6 +11,7 @@ import minicraft.graphic.Color;
 import minicraft.graphic.Point;
 import minicraft.graphic.Screen;
 import minicraft.graphic.SpriteSheet;
+import minicraft.item.CountStrategy;
 import minicraft.item.Items;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
@@ -25,6 +26,8 @@ public class EndGameDisplay extends Display {
 	private int inputDelay; // variable to delay the input of the player, so they won't skip the won menu by accident.
 	private int displayTimer;
 	private int finalScore;
+
+	private Object[] params;
     
 	static {
 		int maxLength = 0;
@@ -67,7 +70,10 @@ public class EndGameDisplay extends Display {
 	}
 
 	private void addBonus(String item) {
-		int count = Game.player.getInventory().count(Items.get(item));
+		Game.player.getInventory().setStrategy(new CountStrategy());
+		params[0] = Items.get(item);
+
+		int count = (int)Game.player.getInventory().executeStrategy(params);
 		int score = count * (random.nextInt(2) + 1) * 10;
         finalScore += score;
 	}

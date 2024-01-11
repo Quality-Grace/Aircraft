@@ -6,6 +6,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.RemoveStrategy;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
 
@@ -13,6 +14,8 @@ class InventoryMenu extends ItemListMenu {
 
 	private final Inventory inv;
 	private final Entity holder;
+
+	private Object[] params;
 
 	InventoryMenu(Entity holder, Inventory inv, String title) {
 		super(InventoryMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
@@ -66,7 +69,10 @@ class InventoryMenu extends ItemListMenu {
 
 	@Override
 	public void removeSelectedEntry() {
-		inv.remove(getSelection());
+		inv.setStrategy(new RemoveStrategy());
+		params[0] = getSelection();
+
+		inv.executeStrategy(params);
 		super.removeSelectedEntry();
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+import minicraft.item.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,13 +78,6 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.SplashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.graphic.Color;
-import minicraft.item.ArmorItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
@@ -106,6 +100,9 @@ public class Load {
 
 	private ArrayList<String> data;
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
+
+	private Object[] params;
+	private static Object[] array;
 
 	private Version worldVersion;
 
@@ -678,7 +675,10 @@ public class Load {
 			int arrowCount = Integer.parseInt(data.remove(0));
 
 			if (worldVersion.compareTo(new Version("2.0.1-dev1")) < 0) {
-				player.getInventory().add(Items.get("arrow"), arrowCount);
+				player.getInventory().setStrategy(new AdditionStrategy());
+				params[0] = Items.get("arrow");
+				params[1] = arrowCount;
+				player.getInventory().executeStrategy(params);
 			}
 		}
 	
@@ -835,14 +835,21 @@ public class Load {
 
 				if (newItem instanceof StackableItem) {
 					((StackableItem) newItem).count = count;
-					inventory.add(newItem);
+					inventory.setStrategy(new AdditionStrategy());
+					params[0] = newItem;
+					inventory.executeStrategy(params);
 				} else {
-					inventory.add(newItem, count);
+					inventory.setStrategy(new AdditionStrategy());
+					params[0] = newItem;
+					params[1] = count;
+					inventory.executeStrategy(params);
 				}
 
 			} else {
 				Item itemToAdd = Items.get(item);
-				inventory.add(itemToAdd);
+				inventory.setStrategy(new AdditionStrategy());
+				params[0] = itemToAdd;
+				inventory.executeStrategy(params);
 			}
 		}
 	}
@@ -986,7 +993,9 @@ public class Load {
 				}
 
 				Item item = Items.get(itemData);
-				chest.getInventory().add(item);
+				chest.getInventory().setStrategy(new AdditionStrategy());
+				array[0] = item;
+				chest.getInventory().executeStrategy(array);
 			}
 
 			if (isDeathChest) {

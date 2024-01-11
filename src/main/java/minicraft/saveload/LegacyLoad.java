@@ -34,12 +34,7 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
-import minicraft.item.ArmorItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
+import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
@@ -58,6 +53,8 @@ public class LegacyLoad {
     public boolean hasLoadedBigWorldAlready;
     Version currentVersion, worldVersion;
     boolean oldSave = false;
+
+    private Object[] params;
 
     Game game = null;
 
@@ -328,7 +325,10 @@ public class LegacyLoad {
         }
 
         if (playerac > 0 && inventory == Game.player.getInventory()) {
-            inventory.add(Items.get("arrow"), playerac);
+            inventory.setStrategy(new AdditionStrategy());
+            params[0] = Items.get("arrow");
+            params[1] = playerac;
+            inventory.executeStrategy(params);
             playerac = 0;
         }
     }
@@ -343,12 +343,17 @@ public class LegacyLoad {
             // System.out.println("Item to fetch: " + itemName + "; count=" + curData[1]);
             Item newItem = Items.get(itemName);
             int count = Integer.parseInt(curData[1]);
-            inventory.add(newItem, count);
+            inventory.setStrategy(new AdditionStrategy());
+            params[0] = newItem;
+            params[1] = count;
+            inventory.executeStrategy(params);
         } else {
             if (oldSave)
                 item = subOldName(item);
             Item toAdd = Items.get(item);
-            inventory.add(toAdd);
+            inventory.setStrategy(new AdditionStrategy());
+            params[0] = toAdd;
+            inventory.executeStrategy(params);
         }
     }
 

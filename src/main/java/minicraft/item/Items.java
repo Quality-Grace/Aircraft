@@ -26,6 +26,8 @@ public class Items {
      */
     private static final ArrayList<Item> items = new ArrayList<>();
 
+    private static Object[] params;
+
     private static void add(Item item) {
         items.add(item);
     }
@@ -39,7 +41,7 @@ public class Items {
     static {
         add(new PowerGloveItem());
         addAll(FurnitureItem.getAllInstances());
-        add(new BoatItem("Boat")); // Disabled to b0.6 fixes
+        add(new BoatItem("Boat"));
         addAll(TorchItem.getAllInstances());
         addAll(BucketItem.getAllInstances());
         addAll(BookItem.getAllInstances());
@@ -132,8 +134,12 @@ public class Items {
 
     public static void fillCreativeInventory(Inventory inventory, boolean addAll) {
         for (Item item : items) {
-            if (!(item instanceof PowerGloveItem) && (addAll || inventory.count(item) == 0)) {
-            	inventory.add(item.clone());
+            inventory.setStrategy(new CountStrategy());
+            params[0] = item;
+            if (!(item instanceof PowerGloveItem) && (addAll || (int)inventory.executeStrategy(params) == 0)) {
+                inventory.setStrategy(new AdditionStrategy());
+                params[0] = item.clone();
+            	inventory.executeStrategy(params);
             }
         }
     }

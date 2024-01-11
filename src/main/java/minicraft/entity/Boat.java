@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.List;
 
+import minicraft.item.AdditionStrategy;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -30,6 +31,8 @@ public class Boat extends Entity {
     private int tickTime =  0;
 
     private Direction pushDir = Direction.NONE; // the direction to push the furniture
+
+    private Object[] params;
 
     public Boat() {
         super(1, 1);
@@ -162,7 +165,11 @@ public class Boat extends Entity {
 
     		// put whatever item the player is holding into their inventory
     		if (!Game.isMode("Creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem)) {
-    			player.getInventory().add(0, player.activeItem); 
+                player.getInventory().setStrategy(new AdditionStrategy());
+                params[0] = 0;
+                params[1] = player.activeItem;
+
+    			player.getInventory().executeStrategy(params);
     		}
 
     		// make this the player's current item.

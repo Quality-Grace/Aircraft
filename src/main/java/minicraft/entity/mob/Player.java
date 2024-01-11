@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.item.*;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -34,20 +35,6 @@ import minicraft.graphic.MobSprite;
 import minicraft.graphic.Point;
 import minicraft.graphic.Rectangle;
 import minicraft.graphic.Screen;
-import minicraft.item.ArmorItem;
-import minicraft.item.FishingRodItem;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.Recipes;
-import minicraft.item.StackableItem;
-import minicraft.item.TileItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -167,35 +154,57 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	public List<String> chatMessages = new ArrayList<String>();
 
+	private Object[] params;
+
 	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		x = 24; y = 24;
 
 		this.input = input;
 		playerInventory = new Inventory() {
-			@Override
+			//@Override
 			public void add(int idx, Item item) {
 				if (Game.isMode("Creative")) {
-					if (count(item) > 0) return;
+					setStrategy(new CountStrategy());
+					params[0] = item;
+
+					if ( (int)executeStrategy(params) > 0) return;
 
 					item = item.clone();
 					if (item instanceof StackableItem) ((StackableItem) item).count = 1;
 				}
-				super.add(idx, item);
+
+				super.setStrategy(new AdditionStrategy());
+				params[0] = idx;
+				params[1] = item;
+				super.executeStrategy(params);
 			}
 
-			@Override
+			//@Override
 			public Item remove(int idx) {
 				if (Game.isMode("Creative")) {
 					Item currentItem = get(idx);
 					if (currentItem instanceof StackableItem) ((StackableItem) currentItem).count = 1;
-					if (count(currentItem) == 1) {
-						super.remove(idx);
-						super.add(0, currentItem);
+					setStrategy(new CountStrategy());
+					params[0] = currentItem;
+
+					if ((int) executeStrategy(params) == 1) {
+						setStrategy(new RemoveStrategy());
+						params[0] = idx;
+						super.executeStrategy(params);
+
+						setStrategy(new AdditionStrategy());
+						params[0] = 0;
+						params[1] = currentItem;
+						super.executeStrategy(params);
 						return currentItem.clone();
 					}
 				}
-				return super.remove(idx);
+
+				setStrategy(new RemoveStrategy());
+				params[0] = idx;
+				return (Item) super.executeStrategy(params);
+
 			}
 		};
 
@@ -657,7 +666,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
             }
 
             if (input.getKey("menu").clicked && activeItem != null) {
-                playerInventory.add(0, activeItem);
+				playerInventory.setStrategy(new AdditionStrategy());
+				params[0] = 0;
+				params[1] = activeItem;
+
+
+                playerInventory.executeStrategy(params);
                 activeItem = null;
             }
 
@@ -712,12 +726,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// if you are now holding something other than a power glove...
 		if (!(activeItem instanceof PowerGloveItem)) { 
 			// and you had a previous item that we should care about...
-			if (previousItem != null && !Game.isMode("Creative")) 
+			if (previousItem != null && !Game.isMode("Creative")) {
 				// then add that previous item to your inventory so it isn't lost.
 				// if something other than a power glove is being held, but the previous item is
 				// null, then nothing happens; nothing added to inventory, and current item
 				// remains as the new one.
-				playerInventory.add(0, previousItem); 
+
+				playerInventory.setStrategy(new AdditionStrategy());
+				params[0] = 0;
+				params[1] = previousItem;
+
+
+				playerInventory.executeStrategy(params);
+
+			}
 		} else {
 			// otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 			activeItem = previousItem; 
@@ -770,9 +792,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
     		// Fire a bow if we have the stamina and an arrow.
     		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
     			ToolItem tool = (ToolItem) activeItem;
-    			if (tool.type == ToolType.Bow && tool.durability > 0 && playerInventory.count(Items.arrowItem) > 0) {
+				playerInventory.setStrategy(new CountStrategy());
+				params[0] = Items.arrowItem;
 
-    				if (!Game.isMode("Creative")) playerInventory.removeItem(Items.arrowItem);
+    			if (tool.type == ToolType.Bow && tool.durability > 0 && (int)playerInventory.executeStrategy(params) > 0) {
+					playerInventory.setStrategy(new RemoveStrategy());
+					params[0] = Items.arrowItem;
+
+    				if (!Game.isMode("Creative")) playerInventory.executeStrategy(params);
     				level.add(new Arrow(this, attackDir, tool.level));
     				attackTime = 10;
 
@@ -978,7 +1005,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
     	return maxHurtDamage > 0;
     }
 
-    /**
+    /*
      * Calculates how much damage the player will do.
      * 
      * @param e Entity being attacked.
@@ -1180,7 +1207,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
     	if (itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).stacksWith(activeItem)) {
     		((StackableItem) activeItem).count += ((StackableItem) itemEntity.item).count;
     	} else {
-    		playerInventory.add(itemEntity.item); // Add item to inventory
+			playerInventory.setStrategy(new AdditionStrategy());
+			params[0] = itemEntity.item;
+    		playerInventory.executeStrategy(params); // Add item to inventory
     	}
     }
 
@@ -1318,8 +1347,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
     	// Make death chest
     	DeathChest deathChest = new DeathChest(this);
 
-    	if (activeItem != null) deathChest.getInventory().add(activeItem);
-    	if (currentArmor != null) deathChest.getInventory().add(currentArmor);
+		deathChest.getInventory().setStrategy(new AdditionStrategy());
+		params[0] = activeItem;
+
+    	if (activeItem != null) deathChest.getInventory().executeStrategy(params);
+
+		params[0] = currentArmor;
+    	if (currentArmor != null) deathChest.getInventory().executeStrategy(params);
 
     	Sound.playerDeath.playOnLevel(this.x, this.y);
         

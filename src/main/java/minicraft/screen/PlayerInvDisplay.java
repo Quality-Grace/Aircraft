@@ -8,10 +8,14 @@ import minicraft.graphic.Color;
 import minicraft.graphic.Font;
 import minicraft.graphic.FontStyle;
 import minicraft.graphic.Screen;
+import minicraft.item.Item;
+import minicraft.item.RemoveStrategy;
 
 public class PlayerInvDisplay extends Display {
 
 	private final Player player;
+
+	private Object[] params;
 
 	public PlayerInvDisplay(Player player) {
 		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
@@ -22,13 +26,16 @@ public class PlayerInvDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("menu").clicked) {
+		if (!menus[0].searcherBarActive && input.getKey("menu").clicked) {
 			Game.exitDisplay();
 			return;
 		}
 
 		if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
-			player.activeItem = player.getInventory().remove(menus[0].getSelection());
+			player.getInventory().setStrategy(new RemoveStrategy());
+			params[0] = menus[0].getSelection();
+
+			player.activeItem = (Item)player.getInventory().executeStrategy(params);
 			Game.exitDisplay();
 		}
 	}

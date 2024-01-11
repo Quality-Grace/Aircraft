@@ -6,9 +6,7 @@ import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.mob.Player;
 import minicraft.graphic.Screen;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 
 public class ContainerDisplay extends Display {
 
@@ -16,6 +14,8 @@ public class ContainerDisplay extends Display {
 
 	private Player player;
 	private Chest chest;
+
+	private Object[] params;
 
 	public ContainerDisplay(Player player, Chest chest) {
 		super(
@@ -99,11 +99,16 @@ public class ContainerDisplay extends Display {
 				// items are setup for sending.
 			} else { // transfer whole item/stack.
 				if (!(Game.isMode("Creative") && from == player.getInventory())) {
-					from.remove(fromSel); // remove it
+					from.setStrategy(new RemoveStrategy());
+					params[0] = fromSel;
+					from.executeStrategy(params); // remove it
 				}
 			}
-			
-			to.add(toSel, toItem);
+
+			to.setStrategy(new AdditionStrategy());
+			params[0] = toSel;
+			params[1] = toItem;
+			to.executeStrategy(params);
 			update();
 		}
 	}
