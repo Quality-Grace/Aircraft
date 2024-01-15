@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
+import minicraft.core.GameRenderer;
 import org.tinylog.Logger;
 
 import minicraft.core.Game;
