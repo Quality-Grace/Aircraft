@@ -36,7 +36,7 @@ public class Firefly extends FlyMob {
 		super.tick();
 
 		int speed = ((tickTime & 0x3) == 3) ? 1 : 0;
-		if (!move(xa * speed, ya * speed) || randomWalkTime == 0 || random.nextInt(20) == 0) {
+		if (!processMove(xa * speed, ya * speed) || randomWalkTime == 0 || random.nextInt(20) == 0) {
 			if (randomWalkTime != 0) {
 				waitTime = 20 + random.nextInt(60);
 			}

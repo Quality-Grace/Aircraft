@@ -6,16 +6,12 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
-import minicraft.core.Game;
-import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.graphic.Rectangle;
 import minicraft.graphic.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
-import minicraft.network.Network;
 
 public abstract class Entity implements Tickable {
 
@@ -151,12 +147,12 @@ public abstract class Entity implements Tickable {
     }
 
 
-    public boolean move(int xd, int yd) {
+    public boolean processMove(int xd, int yd) {
         return movementHandler.move(this, xd, yd);
     }
 
-    protected boolean move2(int xd, int yd) {
-        return movementHandler.move2(this, xd, yd);
+    protected boolean executeMove(int xd, int yd) {
+        return movementHandler.executeMove(this, xd, yd);
     }
 
     public void die() {

@@ -608,7 +608,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
         		}
 
         		// Move the player
-        		boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
+        		boolean moved = processMove(xd, yd); // THIS is where the player moves; part of Mob.java
         		if (moved) stepCount++;
         	}
 

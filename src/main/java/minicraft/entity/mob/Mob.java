@@ -97,7 +97,7 @@ public abstract class Mob extends Entity {
     }
 
     @Override
-    public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
+    public boolean processMove(int xa, int ya) { // Move the mob, overrides from Entity
         return move(xa, ya, true);
     } 
 
@@ -140,7 +140,7 @@ public abstract class Mob extends Entity {
                 ya = Math.copySign(ya, yKnockback) * -1 != ya ? ya : 0; // same as above.
             }
 
-            moved = super.move(xa, ya); // Call the move method from Entity
+            moved = super.processMove(xa, ya); // Call the move method from Entity
         }
         return moved;
     }

@@ -84,7 +84,7 @@ public abstract class MobAi extends Mob {
 
         if (skipTick()) return;
 
-        if (!move(xa * speed, ya * speed)) {
+        if (!processMove(xa * speed, ya * speed)) {
             xa = 0;
             ya = 0;
         }
@@ -126,8 +126,8 @@ public abstract class MobAi extends Mob {
     }
     
     @Override
-    public boolean move(int xa, int ya) {
-        return super.move(xa, ya);
+    public boolean processMove(int xa, int ya) {
+        return super.processMove(xa, ya);
     }
 
     @Override

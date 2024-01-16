@@ -73,7 +73,7 @@ public class Furniture extends Entity {
     @Override
     public void tick() {
         // moves the furniture in the correct direction.
-        move(pushDir.getX(), pushDir.getY());
+        processMove(pushDir.getX(), pushDir.getY());
         pushDir = Direction.NONE;
 
         if (pushTime > 0) {

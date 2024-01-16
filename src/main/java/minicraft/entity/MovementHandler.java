@@ -9,11 +9,15 @@ import minicraft.graphic.Rectangle;
 public class MovementHandler {
 
     public boolean move(Entity entity, int xd, int yd) {
+        return processMove(entity, xd, yd);
+    }
+
+    public boolean processMove(Entity entity, int xd, int yd) {
         if (Updater.saving || (xd == 0 && yd == 0)) return true;
 
-        boolean stopped = !move2(entity, xd, 0);
+        boolean stopped = !executeMove(entity, xd, 0);
 
-        if (move2(entity, 0, yd)) stopped = false;
+        if (executeMove(entity, 0, yd)) stopped = false;
 
         if (!stopped) {
             int xt = entity.x >> 4;
@@ -24,7 +28,7 @@ public class MovementHandler {
         return !stopped;
     }
 
-    public boolean move2(Entity entity, int xd, int yd) {
+    public boolean executeMove(Entity entity, int xd, int yd) {
         if (xd == 0 && yd == 0) {
             return true;
         }

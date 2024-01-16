@@ -67,7 +67,7 @@ public class SplashParticle extends Particle implements ClientTickable {
 		int expectedy = ny - y;
 
 		/// THIS is where x and y are changed.
-		move(expectedx, expectedy); // move the ItemEntity.
+		processMove(expectedx, expectedy); // move the ItemEntity.
 
 		// finds the difference between the inherited before and after positions
 		int gotx = x - ox;
