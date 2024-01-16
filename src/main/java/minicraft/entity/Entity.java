@@ -12,6 +12,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.graphic.Rectangle;
+import minicraft.graphic.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.network.Network;
@@ -31,207 +32,168 @@ public abstract class Entity implements Tickable {
 	 */
 
 	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
-
-    // Fields related to entity coordinates
-    protected int x;
-    protected int y;
-    protected int xr;
-    protected int yr;
-
-    // Fields related to entity state
-    private boolean removed;
-    protected Level level;
-    public final int color;
-    private int eid;
-
-    // Random value for all entity instances
+	
+	/** Random value for all the entities instances **/
     protected static final Random random = new Random();
 
-    protected Entity(int xr, int yr) {
-        this.xr = xr;
-        this.yr = yr;
+    // x, y entity coordinates on the map
+    public int x;
+    public int y;
+    // x, y radius of entity (hitbox)
+    public int xr;
+    public int yr;
 
-        level = null;
-        removed = true;
-        color = 0;
+	private boolean removed; // If the entity is to be removed from the level.
+	protected Level level; // The level that the entity is on.
+    public int color; // Current color. (deprecated for some cases)
+    private final MovementHandler movementHandler = new MovementHandler();
+    private final LifecycleManager lifecycleManager = new LifecycleManager();
+    public int eid; // Entity id
 
-        eid = ThreadLocalRandom.current().nextInt();
+	/**
+	 * Default constructor for the Entity class.
+	 * Assings null/none values to the instace variables.
+	 * The exception is removed which is set to true, and
+	 * lastUpdate which is set to System.nanoTime().
+	 * @param xr X radius of entity.
+	 * @param yr Y radius of entity.
+	 */
+	public Entity(int xr, int yr) { // Add color to this later, in color update
+		this.xr = xr;
+		this.yr = yr;
+		
+		level = null;
+		removed = true;
+		color = 0;
+
+		eid = ThreadLocalRandom.current().nextInt();
     }
 
-    // Methods related to entity state
+    public abstract void render(Screen screen); /// used to render the entity on screen.
+
+    @Override
+    public abstract void tick(); /// used to update the entity.
+
+    /**
+     * Returns true if the entity is removed from the level, otherwise false.
+     * 
+     * @return removed
+     */
     public boolean isRemoved() {
         return removed;
     }
 
+    /**
+     * Returns the level which this entity belongs in.
+     * 
+     * @return level
+     */
     public Level getLevel() {
         return level;
     }
 
-    protected void setHitboxSize(int w, int h) {
-        this.xr = w;
-        this.yr = h;
-    }
-
+    /** @return a Rectangle instance using the defined bounds of the entity. */
     protected Rectangle getBounds() {
         return new Rectangle(x, y, xr * 2, yr * 2, Rectangle.CENTER_DIMS);
     }
 
-    // Methods related to entity behavior
+    /**
+     * @return true if this entity is found in the rectangle specified by given two
+     * coordinates.
+     */
     public boolean isTouching(Rectangle area) {
         return area.intersects(getBounds());
     }
 
-    public abstract int getLightRadius();
+    /** @return if this entity stops other solid entities from moving. */
+    public boolean isSolid() {
+        return true;
+    } // most entities are solid
 
-    protected abstract void touchedBy(Entity entity);
+    /** Determines if the given entity should prevent this entity from moving. */
+    public boolean blocks(Entity entity) {
+        return isSolid() && entity.isSolid();
+    }
 
-    public abstract boolean interact(Player player, @Nullable Item item, Direction attackDir);
+    /** Determines if the entity can swim (extended in sub-classes)*/
+    public boolean canSwim() {
+        return false;
+    } 
 
-    // Methods related to entity movement
+    // This, strangely enough, determines if the entity can walk on wool; among some other things..?
+    public boolean canWool() {
+        return false;
+    } 
+
+    // used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
+    public int getLightRadius() {
+        return 0;
+    }
+    
+    protected void setHitboxSize(int w, int h) {
+    	this.xr = w;
+    	this.yr = h;
+    }
+
+    /**
+     * Interacts with the entity this method is called on
+     * 
+     * @param player    The player attacking
+     * @param item      The item the player attacked with
+     * @param attackDir The direction to interact
+     * @return If the interaction was successful
+     */
+    public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+        return false;
+    }
+
+    protected void touchedBy(Entity entity) {
+    }
+
+
     public boolean move(int xd, int yd) {
-        if (Updater.saving || (xd == 0 && yd == 0)) return true;
-        boolean stopped = !move2(xd, 0);
-        if (move2(0, yd)) stopped = false;
-        if (!stopped) {
-            int xt = x >> 4;
-            int yt = y >> 4;
-            level.getTile(xt, yt).steppedOn(level, xt, yt, this);
-        }
-        return !stopped;
+        return movementHandler.move(this, xd, yd);
     }
 
     protected boolean move2(int xd, int yd) {
-        if (xd == 0 && yd == 0) {
-            return true;
-        }
-
-        int[] currentTileCoords = getCurrentTileCoords();
-        int[] newTileCoords = getNewTileCoords(xd, yd);
-
-        for (int yt = newTileCoords[1]; yt <= newTileCoords[3]; yt++) {
-            for (int xt = newTileCoords[0]; xt <= newTileCoords[2]; xt++) {
-                if (isSpriteTouchingTile(xt, yt, currentTileCoords)) {
-                    continue;
-                }
-
-                level.getTile(xt, yt).bumpedInto(level, xt, yt, this);
-
-                if (!level.getTile(xt, yt).mayPass(level, xt, yt, this)) {
-                    return false;
-                }
-            }
-        }
-
-        List<Entity> isInside = getEntitiesInNewRect(xd, yd);
-
-        handleEntityInteractions(isInside);
-
-        updateEntityPosition(xd, yd);
-        return true;
+        return movementHandler.move2(this, xd, yd);
     }
 
-
-    private List<Entity> getEntitiesInNewRect(int xd, int yd) {
-        int xr = this.xr;
-        int yr = this.yr;
-        Rectangle newRect = new Rectangle(x + xd, y + yd, xr * 2, yr * 2, Rectangle.CENTER_DIMS);
-        return level.getEntitiesInRect(newRect);
-    }
-
-
-    private int[] getCurrentTileCoords() {
-        int xto0 = ((x) - xr) >> 4;
-        int yto0 = ((y) - yr) >> 4;
-        int xto1 = ((x) + xr) >> 4;
-        int yto1 = ((y) + yr) >> 4;
-        return new int[]{xto0, yto0, xto1, yto1};
-    }
-
-    private int[] getNewTileCoords(int xd, int yd) {
-        int xt0 = ((x + xd) - xr) >> 4;
-        int yt0 = ((y + yd) - yr) >> 4;
-        int xt1 = ((x + xd) + xr) >> 4;
-        int yt1 = ((y + yd) + yr) >> 4;
-        return new int[]{xt0, yt0, xt1, yt1};
-    }
-
-    private boolean isSpriteTouchingTile(int xt, int yt, int[] currentTileCoords) {
-        return xt >= currentTileCoords[0] && xt <= currentTileCoords[2] &&
-                yt >= currentTileCoords[1] && yt <= currentTileCoords[3];
-    }
-
-    private void handleEntityInteractions(List<Entity> isInside) {
-        for (Entity entity : isInside) {
-            if (entity == this || (entity instanceof Player && !(this instanceof Player))) {
-                continue;
-            }
-            entity.touchedBy(this);
-        }
-    }
-
-    private void updateEntityPosition(int xd, int yd) {
-        x += xd;
-        y += yd;
-    }
-
-    // Methods related to entity removal
     public void die() {
-        remove();
+        lifecycleManager.die(this);
     }
 
     public void remove() {
-        removed = true;
-
-        if (level == null) {
-            Logger.warn("Note: remove() called on entity with no level reference: " + getClass());
-        } else {
-            level.remove(this);
-        }
+        lifecycleManager.remove(this);
     }
 
     public void remove(Level level) {
-        if (level != this.level) {
-            if (Game.debug) Logger.info("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
-        } else {
-            removed = true;
-            this.level = null;
-        }
+        lifecycleManager.remove(this, level);
     }
 
-    // Methods related to entity level and player interactions
     public void setLevel(Level level, int x, int y) {
-        if (level == null) {
-            Logger.warn("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
-            return;
-        }
-
-        this.level = level;
-        removed = false;
-        this.x = x;
-        this.y = y;
-
-        if (eid < 0) eid = Network.generateUniqueEntityId();
+        lifecycleManager.setLevel(this, level, x, y);
     }
 
     public boolean isWithin(int tileRadius, Entity other) {
-        if (level == null || other.getLevel() == null) {
-            return false;
-        }
-        if (level.depth != other.getLevel().depth) {
-            return false;
-        }
-
-        double distance = Math.abs(Math.hypot(x - other.x, y - other.y));
-
-        return Math.round(distance) >> 4 <= tileRadius;
+        return hasSameLevel(other) && calculateDistanceTo(other) <= tileRadius;
     }
+
+    private boolean hasSameLevel(Entity other) {
+        return level != null && other.getLevel() != null && level.depth == other.getLevel().depth;
+    }
+
+    private double calculateDistanceTo(Entity other) {
+        return Math.abs(Math.hypot(x - other.x, y - other.y));
+    }
+
 
     protected Player getClosestPlayer() {
         return getClosestPlayer(true);
     }
 
     protected Player getClosestPlayer(boolean returnSelf) {
-        if (this instanceof Player && returnSelf) {
+        if (shouldReturnSelf(returnSelf)) {
             return (Player) this;
         }
 
@@ -239,7 +201,12 @@ public abstract class Entity implements Tickable {
         return level.getClosestPlayer(x, y);
     }
 
-    // Other methods
+    private boolean shouldReturnSelf(boolean returnSelf) {
+        return this instanceof Player && returnSelf;
+    }
+
+
+    @Override
     public String toString() {
         return getClass().getSimpleName() + getDataPrints();
     }
@@ -258,5 +225,29 @@ public abstract class Entity implements Tickable {
     @Override
     public final int hashCode() {
         return eid;
+    }
+
+    public void setRemoved(boolean b) {
+       removed = b;
+    }
+
+    public void setLevel(Level level2) {
+        level = level2;
+    }
+
+    public void setX(int x2) {
+        x = x2;
+    }
+
+    public void setY(int y2) {
+        y = y2;
+    }
+
+    public int getEid() {
+        return eid;
+    }
+
+    public void setEid(int uniqueEntityId) {
+        eid = uniqueEntityId;
     }
 }
