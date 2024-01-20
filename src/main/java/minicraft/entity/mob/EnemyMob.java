@@ -175,4 +175,8 @@ public class EnemyMob extends MobAi {
     public int getMaxLevel() {
         return lvlSprites.length;
     }
+
+    public int getLvl() {
+        return this.lvl;
+    }
 }

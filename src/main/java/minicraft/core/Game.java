@@ -40,7 +40,7 @@ public class Game {
 	protected Game() {} // Can't instantiate the Game class.
 
 	/** Random values used for some Game class logic **/
-	protected static final Random random = new Random(); // Create a Random object to generate random numbers  
+	public static final Random random = new Random(); // Create a Random object to generate random numbers
 	
 	public static boolean debug = false; // --debug arg
 

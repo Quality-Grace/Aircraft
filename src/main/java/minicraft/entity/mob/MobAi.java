@@ -242,4 +242,7 @@ public abstract class MobAi extends Mob {
         super.die();
     }
 
+    public int getColor() {
+        return this.color;
+    }
 }
